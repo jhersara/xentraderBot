@@ -1,0 +1,13 @@
+# Check list de desarrollo
+- ### [ ] Estructura base creada.
+- ### [ ] App arranca y muestra navegacion basica
+- ### [ ] Login -> Mian(flujo completo)
+- ### [ ] Config leida desde archivos locales
+- ### [ ] Dashboard con datos mock
+- ### [ ] Conexion real con el broker
+- ### [ ] Trading manual operatiuvo.
+- ### [ ] Bot automatico con worker dedicado
+- ### [ ] Charts con indicadores basicos
+- ### [ ] Logs en vivo + esportacion
+- ### [ ] Persistencia de preferencias
+- ### [ ] Empaquetado funcional.

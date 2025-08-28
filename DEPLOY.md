@@ -1,5 +1,5 @@
 # Check list de desarrollo
-- ### [ ] Estructura base creada.
+- ### [ x ] Estructura base creada.
 - ### [ ] App arranca y muestra navegacion basica
 - ### [ ] Login -> Mian(flujo completo)
 - ### [ ] Config leida desde archivos locales

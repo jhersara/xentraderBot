@@ -1,0 +1,143 @@
+{
+  "CTk": { 
+    "fg_color": ["#282A36", "#282A36"],
+    "text_color": ["#F8F8F2", "#F8F8F2"]
+  },
+  
+  "CTkFont": { 
+    "family": "Consolas", 
+    "size": 14, 
+    "weight": "normal" 
+  },
+
+  "CTkButton": {
+    "fg_color": ["#BD93F9", "#BD93F9"],
+    "hover_color": ["#FF79C6", "#FF79C6"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "corner_radius": 6,
+    "border_width": 0,
+    "border_color": ["#6272A4", "#6272A4"]
+  },
+
+  "CTkLabel": {
+    "fg_color": ["transparent", "transparent"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "corner_radius": 0
+  },
+
+  "CTkEntry": {
+    "fg_color": ["#44475A", "#44475A"],
+    "border_color": ["#6272A4", "#6272A4"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "placeholder_text_color": ["#BFBFBF", "#BFBFBF"],
+    "corner_radius": 5,
+    "border_width": 2
+  },
+
+  "CTkFrame": {
+    "fg_color": ["#21222C", "#21222C"],
+    "border_color": ["#282A36", "#282A36"],
+    "corner_radius": 0,
+    "border_width": 0
+  },
+
+  "CTkScrollbar": {
+    "button_color": ["#6272A4", "#6272A4"],
+    "button_hover_color": ["#50FA7B", "#50FA7B"],
+    "fg_color": ["#44475A", "#44475A"]
+  },
+
+  "CTkCheckBox": {
+    "fg_color": ["#BD93F9", "#BD93F9"],
+    "hover_color": ["#FF79C6", "#FF79C6"],
+    "checkmark_color": ["#50FA7B", "#50FA7B"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "checkbox_width": 20,
+    "checkbox_height": 20,
+    "corner_radius": 4,
+    "border_width": 2,
+    "border_color": ["#6272A4", "#6272A4"],
+    "hover": true
+  },
+
+  "CTkRadioButton": {
+    "fg_color": ["#BD93F9", "#BD93F9"],
+    "hover_color": ["#FF79C6", "#FF79C6"],
+    "border_color": ["#6272A4", "#6272A4"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "corner_radius": 8,
+    "border_width": 2,
+    "radiobutton_width": 20,
+    "radiobutton_height": 20
+  },
+
+  "CTkSlider": {
+    "fg_color": ["#44475A", "#44475A"],
+    "progress_color": ["#50FA7B", "#50FA7B"],
+    "button_color": ["#BD93F9", "#BD93F9"],
+    "button_hover_color": ["#FF79C6", "#FF79C6"],
+    "corner_radius": 8,
+    "border_width": 0,
+    "border_color": ["#6272A4", "#6272A4"]
+  },
+
+  "CTkSwitch": {
+    "fg_color": ["#44475A", "#44475A"],
+    "progress_color": ["#50FA7B", "#50FA7B"],
+    "button_color": ["#BD93F9", "#BD93F9"],
+    "button_hover_color": ["#FF79C6", "#FF79C6"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "corner_radius": 8,
+    "border_width": 2,
+    "border_color": ["#6272A4", "#6272A4"],
+    "switch_width": 36,
+    "switch_height": 18
+  },
+
+  "CTkTextbox": {
+    "fg_color": ["#44475A", "#44475A"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "scrollbar_button_color": ["#6272A4", "#6272A4"],
+    "scrollbar_button_hover_color": ["#50FA7B", "#50FA7B"],
+    "corner_radius": 6,
+    "border_width": 1,
+    "border_color": ["#6272A4", "#6272A4"]
+  },
+
+  "CTkOptionMenu": {
+    "fg_color": ["#BD93F9", "#BD93F9"],
+    "button_color": ["#6272A4", "#6272A4"],
+    "button_hover_color": ["#FF79C6", "#FF79C6"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "corner_radius": 6,
+    "border_width": 0,
+    "border_color": ["#6272A4", "#6272A4"]
+  },
+
+  "CTkComboBox": {
+    "fg_color": ["#44475A", "#44475A"],
+    "border_color": ["#BD93F9", "#BD93F9"],
+    "button_color": ["#6272A4", "#6272A4"],
+    "button_hover_color": ["#FF79C6", "#FF79C6"],
+    "text_color": ["#F8F8F2", "#F8F8F2"],
+    "text_color_disabled": ["#6272A4", "#44475A"],
+    "corner_radius": 6,
+    "border_width": 2
+  },
+
+  "CTkProgressBar": {
+    "fg_color": ["#44475A", "#44475A"],
+    "progress_color": ["#50FA7B", "#50FA7B"],
+    "border_color": ["#6272A4", "#6272A4"],
+    "corner_radius": 8,
+    "border_width": 0
+  }
+}

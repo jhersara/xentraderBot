@@ -11,15 +11,12 @@ logger = get_logger(__name__)
 
 # Funciones principales
 # Funcion inicial
-def main():
-    pass
-
 
 # Ejecutador del codigo principal
 # if __name__ == "__main__":
-#     app = MainApp()
-#     app.run()
+#      app = MainApp()
+#      app.run()
 
 if __name__ == "__main__":
-    app = LoginView()
-    app.run()
+     app = LoginView()
+     app.run()

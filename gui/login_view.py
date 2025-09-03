@@ -49,7 +49,7 @@ class LoginView(ctk.CTk):
 
     # ---------------- Barra de navegación ---------------- #
     def _title_navbar(self):
-        self.title_bar = ctk.CTkFrame(self, height=35, fg_color="#16161D")
+        self.title_bar = ctk.CTkFrame(self, height=30, fg_color="#323243", border_width=0, corner_radius=0)
         self.title_bar.pack(fill="x", side="top")
 
         # Logo de la app
@@ -61,13 +61,13 @@ class LoginView(ctk.CTk):
                 size=(22, 22)
             )
             logo_label = ctk.CTkLabel(self.title_bar, image=self.logo, text="")
-            logo_label.pack(side="left", padx=12, pady=6)
+            logo_label.pack(side="left", pady=4)
         except:
             # Si no se encuentra la imagen del logo, usar solo texto
             pass
 
         # Nombre de la app
-        app_name = ctk.CTkLabel(self.title_bar, text="AMU", font=("Arial", 16, "bold"), text_color="#FFFFFF")
+        app_name = ctk.CTkLabel(self.title_bar, text="Xentraders - Logout", font=("Arial", 14, "bold"), text_color="#FFFFFF")
         app_name.pack(side="left", padx=(12 if not hasattr(self, 'logo') else 0, 0))
 
         # Botones ventana
@@ -78,35 +78,35 @@ class LoginView(ctk.CTk):
 
             self.close_icon = ctk.CTkImage(Image.open(close_ico), size=(12, 12))
             close_btn = ctk.CTkButton(self.title_bar, image=self.close_icon, text="",
-                                      fg_color="transparent", hover_color="#FF5555", width=35, height=35,
+                                      fg_color="transparent", hover_color="#FF5555", width=35, height=30,
                                       command=self._close_wind, corner_radius=0)
             close_btn.pack(side="right")
 
             self.max_icon = ctk.CTkImage(Image.open(max_ico), size=(16, 16))
             max_btn = ctk.CTkButton(self.title_bar, image=self.max_icon, text="",
-                                    fg_color="transparent", hover_color="#44475A", width=35, height=35,
+                                    fg_color="transparent", hover_color="#44475A", width=35, height=30,
                                     command=self._toggle_maximized, corner_radius=0)
             max_btn.pack(side="right")
 
             self.min_icon = ctk.CTkImage(Image.open(min_ico), size=(16, 16))
             min_btn = ctk.CTkButton(self.title_bar, image=self.min_icon, text="",
-                                    fg_color="transparent", hover_color="#44475A", width=35, height=35,
+                                    fg_color="transparent", hover_color="#44475A", width=35, height=30,
                                     command=self._minimized_to_dray, corner_radius=0)
             min_btn.pack(side="right")
         except:
             # Si no se encuentran los iconos, usar botones de texto
             close_btn = ctk.CTkButton(self.title_bar, text="✕", 
-                                      fg_color="transparent", hover_color="#FF5555", width=35, height=35,
+                                      fg_color="transparent", hover_color="#FF5555", width=35, height=30,
                                       command=self._close_wind, corner_radius=0, font=("Arial", 12))
             close_btn.pack(side="right")
 
             max_btn = ctk.CTkButton(self.title_bar, text="□", 
-                                    fg_color="transparent", hover_color="#44475A", width=35, height=35,
+                                    fg_color="transparent", hover_color="#44475A", width=35, height=30,
                                     command=self._toggle_maximized, corner_radius=0, font=("Arial", 12))
             max_btn.pack(side="right")
 
             min_btn = ctk.CTkButton(self.title_bar, text="−", 
-                                    fg_color="transparent", hover_color="#44475A", width=35, height=35,
+                                    fg_color="transparent", hover_color="#44475A", width=35, height=30,
                                     command=self._minimized_to_dray, corner_radius=0, font=("Arial", 12))
             min_btn.pack(side="right")
 
@@ -123,180 +123,11 @@ class LoginView(ctk.CTk):
 
         # Columna izquierda - Panel de imagen
         left_frame = ctk.CTkFrame(main_frame, fg_color="#2D1B69", corner_radius=0)
-        left_frame.pack(side="left", fill="both", expand=True)
+        left_frame.pack()
 
-        # Crear gradiente de fondo (simulado con frame)
-        gradient_frame = ctk.CTkFrame(left_frame, fg_color="#2D1B69", corner_radius=0)
-        gradient_frame.pack(fill="both", expand=True)
-
-        # Imagen de fondo
-        try:
-            pt_image = self._get_patch("gui/img/img/hero1.jpg")
-            bg_image = ctk.CTkImage(Image.open(pt_image), size=(500, 650))
-            bg_label = ctk.CTkLabel(gradient_frame, image=bg_image, text="")
-            bg_label.place(relx=0.5, rely=0.5, anchor="center")
-        except:
-            # Si no se encuentra la imagen, usar color sólido con texto
-            placeholder_label = ctk.CTkLabel(gradient_frame, text="Background Image\n(hero1.jpg)", 
-                                           font=("Arial", 16), text_color="#FFFFFF")
-            placeholder_label.place(relx=0.5, rely=0.5, anchor="center")
-
-        # Botón volver (esquina superior derecha) - SIN rgba
-        back_btn = ctk.CTkButton(gradient_frame, text="← Back to website", 
-                                fg_color="#4A4A6A",  # Color sólido en lugar de rgba
-                                hover_color="#5A5A7A", 
-                                corner_radius=20, width=140, height=32,
-                                font=("Arial", 12), text_color="#FFFFFF",
-                                border_width=1, border_color="#6A6A8A")
-        back_btn.place(relx=0.85, rely=0.08, anchor="center")
-
-        # Contenedor para el texto inferior
-        bottom_content = ctk.CTkFrame(gradient_frame, fg_color="transparent")
-        bottom_content.place(relx=0.5, rely=0.85, anchor="center")
-
-        # Texto slogan
-        slogan = ctk.CTkLabel(bottom_content, text="Capturing Moments,\nCreating Memories",
-                              font=("Arial", 28, "bold"), text_color="#FFFFFF",
-                              justify="center")
-        slogan.pack(pady=(0, 20))
-
-        # Indicadores de página (dots)
-        dots_frame = ctk.CTkFrame(bottom_content, fg_color="transparent")
-        dots_frame.pack()
-
-        # Crear dots individuales
-        dot1 = ctk.CTkFrame(dots_frame, width=8, height=8, corner_radius=4, fg_color="#6A6A8A")
-        dot1.pack(side="left", padx=4)
-
-        dot2 = ctk.CTkFrame(dots_frame, width=8, height=8, corner_radius=4, fg_color="#6A6A8A")
-        dot2.pack(side="left", padx=4)
-
-        dot3 = ctk.CTkFrame(dots_frame, width=8, height=8, corner_radius=4, fg_color="#FFFFFF")
-        dot3.pack(side="left", padx=4)
-
-        # Columna derecha - Formulario
-        right_frame = ctk.CTkFrame(main_frame, fg_color="#1A1A1A", corner_radius=0, width=500)
-        right_frame.pack(side="right", fill="both", padx=0, pady=0)
-        right_frame.pack_propagate(False)
-
-        # Contenedor del formulario con padding
-        form_container = ctk.CTkFrame(right_frame, fg_color="transparent")
-        form_container.pack(fill="both", expand=True, padx=40, pady=40)
-
-        # Texto superior "Already have an account?"
-        login_link_frame = ctk.CTkFrame(form_container, fg_color="transparent")
-        login_link_frame.pack(fill="x", pady=(0, 30))
-
-        login_text = ctk.CTkLabel(login_link_frame, text="Already have an account?", 
-                                 font=("Arial", 13), text_color="#8B8B8B")
-        login_text.pack(side="left")
-
-        # Botón "Log in" SIN hover_color transparent
-        login_link = ctk.CTkButton(login_link_frame, text="Log in", 
-                                  font=("Arial", 13), text_color="#7C4DFF",
-                                  fg_color="transparent", 
-                                  # Removido hover_color="transparent" que causaba el error
-                                  width=50, height=20)
-        login_link.pack(side="left", padx=(5, 0))
-
-        # Título principal
-        title = ctk.CTkLabel(form_container, text="Create an account",
-                            font=("Arial", 32, "bold"), text_color="#FFFFFF")
-        title.pack(pady=(0, 40), anchor="w")
-
-        # Frame para campos de nombre
-        name_frame = ctk.CTkFrame(form_container, fg_color="transparent")
-        name_frame.pack(fill="x", pady=(0, 20))
-
-        # Campo First name
-        self.first_name = ctk.CTkEntry(name_frame, placeholder_text="Fletcher", 
-                                      corner_radius=8, height=50, font=("Arial", 14),
-                                      fg_color="#2A2A2A", border_color="#3A3A3A",
-                                      placeholder_text_color="#6B6B6B")
-        self.first_name.pack(side="left", fill="x", expand=True, padx=(0, 10))
-
-        # Campo Last name
-        self.last_name = ctk.CTkEntry(name_frame, placeholder_text="Last name", 
-                                     corner_radius=8, height=50, font=("Arial", 14),
-                                     fg_color="#2A2A2A", border_color="#3A3A3A",
-                                     placeholder_text_color="#6B6B6B")
-        self.last_name.pack(side="left", fill="x", expand=True)
-
-        # Campo Email
-        self.email = ctk.CTkEntry(form_container, placeholder_text="Email", 
-                                 corner_radius=8, height=50, font=("Arial", 14),
-                                 fg_color="#2A2A2A", border_color="#3A3A3A",
-                                 placeholder_text_color="#6B6B6B")
-        self.email.pack(fill="x", pady=(0, 20))
-
-        # Frame para campo de contraseña con icono
-        password_frame = ctk.CTkFrame(form_container, fg_color="transparent")
-        password_frame.pack(fill="x", pady=(0, 25))
-
-        # Campo Password
-        self.password = ctk.CTkEntry(password_frame, placeholder_text="Enter your password", 
-                                    show="*", corner_radius=8, height=50, font=("Arial", 14),
-                                    fg_color="#2A2A2A", border_color="#3A3A3A",
-                                    placeholder_text_color="#6B6B6B")
-        self.password.pack(side="left", fill="x", expand=True)
-
-        # Botón para mostrar/ocultar contraseña
-        eye_btn = ctk.CTkButton(password_frame, text="👁", width=50, height=50,
-                               fg_color="transparent", hover_color="#3A3A3A",
-                               command=self._toggle_password_visibility,
-                               font=("Arial", 16))
-        eye_btn.pack(side="right", padx=(10, 0))
-
-        # Checkbox Terms & Conditions
-        self.terms_checkbox = ctk.CTkCheckBox(form_container, 
-                                             text="I agree to the Terms & Conditions",
-                                             font=("Arial", 13), text_color="#CCCCCC",
-                                             checkbox_width=18, checkbox_height=18,
-                                             corner_radius=4, border_width=2,
-                                             fg_color="#7C4DFF", hover_color="#6B3FE6")
-        self.terms_checkbox.pack(anchor="w", pady=(0, 30))
-
-        # Botón Create account
-        create_btn = ctk.CTkButton(form_container, text="Create account",
-                                  fg_color="#7C4DFF", hover_color="#6B3FE6", 
-                                  corner_radius=8, height=50, font=("Arial", 16, "bold"))
-        create_btn.pack(fill="x", pady=(0, 30))
-
-        # Separador "Or register with"
-        separator_frame = ctk.CTkFrame(form_container, fg_color="transparent")
-        separator_frame.pack(fill="x", pady=(0, 25))
-
-        # Línea izquierda
-        line_left = ctk.CTkFrame(separator_frame, height=1, fg_color="#3A3A3A")
-        line_left.pack(side="left", fill="x", expand=True, pady=10)
-
-        # Texto separador
-        sep_label = ctk.CTkLabel(separator_frame, text="Or register with", 
-                                font=("Arial", 13), text_color="#8B8B8B")
-        sep_label.pack(side="left", padx=15)
-
-        # Línea derecha
-        line_right = ctk.CTkFrame(separator_frame, height=1, fg_color="#3A3A3A")
-        line_right.pack(side="left", fill="x", expand=True, pady=10)
-
-        # Frame para botones sociales
-        social_frame = ctk.CTkFrame(form_container, fg_color="transparent")
-        social_frame.pack(fill="x")
-
-        # Botón Google
-        google_btn = ctk.CTkButton(social_frame, text="🔍 Google", 
-                                  fg_color="#FFFFFF", text_color="#000000",
-                                  hover_color="#F0F0F0", corner_radius=8, height=45,
-                                  font=("Arial", 14, "bold"))
-        google_btn.pack(side="left", fill="x", expand=True, padx=(0, 10))
-
-        # Botón Apple
-        apple_btn = ctk.CTkButton(social_frame, text="🍎 Apple", 
-                                 fg_color="#000000", text_color="#FFFFFF",
-                                 hover_color="#1A1A1A", corner_radius=8, height=45,
-                                 font=("Arial", 14, "bold"), border_width=1,
-                                 border_color="#3A3A3A")
-        apple_btn.pack(side="left", fill="x", expand=True)
+        # Columna Derecha - Panel de formulario
+        right_frame = ctk.CTkFrame(main_frame, fg_color="#1A1A1A")
+        right_frame.pack()
 
 
     # ---------------- Funciones de interacción ---------------- #

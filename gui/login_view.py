@@ -9,6 +9,12 @@ import os
 import pystray
 import threading
 
+# Variables de desarrollo
+x = "x"
+y = "y"
+left = "left"
+right = "right"
+
 # Llamada al log 
 logger = get_logger(__name__)
 
@@ -29,6 +35,7 @@ class LoginView(ctk.CTk):
         # Tamaño inicial optimizado
         self.geometry("900x650")
         self.normal_geometry = "900x650"
+        self.resizable(None, None)
         self.is_maximized = False
         self.tray_icon = None
         self.tray_thread = None
@@ -119,25 +126,91 @@ class LoginView(ctk.CTk):
     def _create_ui(self):
         # Frame principal sin padding para ocupar toda la ventana
         main_frame = ctk.CTkFrame(self, fg_color="transparent", corner_radius=0)
-        main_frame.pack(fill="both", expand=True)
+        main_frame.pack(fill="both", expand=True, pady=0, padx=0)
 
-        # Columna izquierda - Panel de imagen
-        left_frame = ctk.CTkFrame(main_frame, fg_color="#2D1B69", corner_radius=0)
-        left_frame.pack()
+        # Columna izquierdo - Panel de imagen
+        left_frame = ctk.CTkFrame(main_frame, corner_radius=0, width=400)
+        left_frame.pack(side="left", fill="y", padx=0, pady=0)
+        left_frame.pack_propagate(False)
+
+        # Imagen de portada Proximamente un carrusel
+        try:
+            hr_img = self._get_patch("gui/img/img/hero2.jpg")
+            bg_img = ctk.CTkImage(Image.open(hr_img), size=(320, 620))
+            bg_label = ctk.CTkLabel(left_frame, image=bg_img, text="", corner_radius=15)
+            bg_label.pack(expand=True, fill="y", pady=0, padx=0)
+        except:
+            # En caso de que no encuentre la imagen
+            placeholder_label= ctk.CTkLabel(left_frame, text="Background Image\n(hero1.jpg)", font=("Arial", 16), text_color="#FFFFFF")
+            placeholder_label.place(relx=0.5, rely=0.5, anchor="center")
+
+
 
         # Columna Derecha - Panel de formulario
-        right_frame = ctk.CTkFrame(main_frame, fg_color="#1A1A1A")
-        right_frame.pack()
+        right_frame = ctk.CTkFrame(main_frame, fg_color="#1A1A1A", corner_radius=0)
+        right_frame.pack(side="right", expand=True, fill="both")
+        right_frame.pack_propagate(False)
 
+        # Contenedor del fromulario con padding
+        form_ctn = ctk.CTkFrame(right_frame, fg_color="transparent")
+        form_ctn.pack(fill="both", expand=True, pady=20, padx=40)
+
+        # Texto de si se tiene una cuenta
+        login_link_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        login_link_fm.pack(fill="x", pady=(0,30))
+
+        login_link_txt = ctk.CTkLabel(login_link_fm, text="¿Ya tienes una cuenta?", font=("Arial", 13), text_color="#8B8B8B")
+        login_link_txt.pack(side="left")
+
+        # Botón "Log in" SIN hover_color transparent
+        login_link_btn = ctk.CTkButton(login_link_fm, text="Ingresar.", font=("Arial", 13, "bold"), fg_color="transparent", text_color="#7C4DFF",text_color_disabled="#ffffff", width=50, height=20, hover_color="#272727")
+        login_link_btn.pack(padx=(5,0), side="left")
+
+        # Titulo principal
+        title_frame = ctk.CTkLabel(form_ctn, text="Crear una Cuenta", font=("Arial", 28, "bold"), text_color="#FFFFFF")
+        title_frame.pack(anchor="w", pady=(0,10))
+
+        # Frame para campos de nombre
+        name_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        name_fm.pack(fill=x,  pady=(0, 20))
+
+        # Campos de nombres 
+        self.first_name = ctk.CTkEntry(name_fm, placeholder_text="Primer Nombre",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.first_name.pack(side=left, fill=x, expand=True, padx=(0, 10))
+        self.last_name = ctk.CTkEntry(name_fm, placeholder_text="Segundo Nombre",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.last_name.pack(side=left, fill=x, expand=True)
+
+        # Campo del email
+        self.email = ctk.CTkEntry(form_ctn, placeholder_text="Email",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.email.pack(fill=x, pady=(0,10))
+        self.email_verify = ctk.CTkEntry(form_ctn, placeholder_text="Confirmar Email",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.email_verify.pack(fill=x, pady=(0, 10))
+
+        # Frame para el campo de contraseña mas icono
+        password_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        password_fm.pack(fill=x)
+
+        self.password = ctk.CTkEntry(password_fm, placeholder_text="Contraseña:", show="*", corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.password.pack(side=left, fill=x, expand=True, padx=(0,10))
+
+        # Seccion para el boton de ver u ocultar
+        uri_patch = self._get_patch("gui/img/icons/cil-lock-unlocked.png")
+        uri_patch2 = self._get_patch("gui/img/icons/cil-lock-locked.png")
+        self.view_unable = ctk.CTkImage(Image.open(uri_patch2), size=(20, 20))
+        self.view_enable = ctk.CTkImage(Image.open(uri_patch), size=(20, 20))
+        self.eye_btn = ctk.CTkButton(password_fm,image=self.view_enable, text="", width=40, height=40, fg_color="transparent", hover_color="#3A3A3A", corner_radius=10, command=self._toggle_password_visibility)
+        self.eye_btn.pack(side=right)
 
     # ---------------- Funciones de interacción ---------------- #
     def _toggle_password_visibility(self):
         if self.password_visible:
             self.password.configure(show="*")
             self.password_visible = False
+            self.eye_btn.configure(image=self.view_enable)
         else:
             self.password.configure(show="")
             self.password_visible = True
+            self.eye_btn.configure(image=self.view_unable)
 
 
     # ---------------- Eventos de movimiento ventana ---------------- #

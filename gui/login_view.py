@@ -182,16 +182,18 @@ class LoginView(ctk.CTk):
 
         # Campo del email
         self.email = ctk.CTkEntry(form_ctn, placeholder_text="Email",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-        self.email.pack(fill=x, pady=(0,10))
+        self.email.pack(fill=x, pady=(0,15))
         self.email_verify = ctk.CTkEntry(form_ctn, placeholder_text="Confirmar Email",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-        self.email_verify.pack(fill=x, pady=(0, 10))
+        self.email_verify.pack(fill=x, pady=(0, 20))
 
         # Frame para el campo de contraseña mas icono
         password_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-        password_fm.pack(fill=x)
+        password_fm.pack(fill=x, pady=(0, 20))
 
         self.password = ctk.CTkEntry(password_fm, placeholder_text="Contraseña:", show="*", corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
         self.password.pack(side=left, fill=x, expand=True, padx=(0,10))
+        self.password_confirm = ctk.CTkEntry(password_fm, placeholder_text="Repetir Contraseña:", show="*", corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.password_confirm.pack(side=left, fill=x, expand=True, padx=(0,10))
 
         # Seccion para el boton de ver u ocultar
         uri_patch = self._get_patch("gui/img/icons/cil-lock-unlocked.png")
@@ -200,15 +202,60 @@ class LoginView(ctk.CTk):
         self.view_enable = ctk.CTkImage(Image.open(uri_patch), size=(20, 20))
         self.eye_btn = ctk.CTkButton(password_fm,image=self.view_enable, text="", width=40, height=40, fg_color="transparent", hover_color="#3A3A3A", corner_radius=10, command=self._toggle_password_visibility)
         self.eye_btn.pack(side=right)
+    
+        # CheckBox Terms & Condiction
+        self.terms_check = ctk.CTkCheckBox(form_ctn, text="Estoy de acuerdo con los Términos y Condiciones", font=("Arial", 13), text_color="#CCCCCC", checkbox_width=18, checkbox_height=18, corner_radius=4, border_width=2, fg_color="#7C4DFF", hover_color="#6B3FE6", border_color="#CCCCCC")
+        self.terms_check.pack(anchor="w", pady=(0, 25))
+
+        # Boton de crear cuenta
+        self.send_btn = ctk.CTkButton(form_ctn, text="Crear Cuenta",fg_color="#7C4DFF", hover_color="#6B3FE6", corner_radius=8, height=40, font=("Arial", 16, "bold") )
+        self.send_btn.pack(fill=x, pady=(0, 25))
+
+        # Separador "Or register Width "
+        separate_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        separate_fm.pack(fill=x, pady=(0,25))
+
+        # Linea Izquierda 
+        ln_left = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
+        ln_left.pack(side=left, fill=x, expand=True, pady=10)
+
+        # Texto separador
+        sep_label = ctk.CTkLabel(separate_fm, text="Or register with", font=("Arial", 16), text_color="#8B8B8B")
+        sep_label.pack(side="left", padx=10)
+
+        ln_right = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
+        ln_right.pack(side=right, fill=x, expand=True, pady=10)
+
+        # Frame para botones de redes sociales
+        social_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        social_fm.pack(fill=x)
+
+        # Imagenes de facebook e Google
+        uri_patch = self._get_patch("gui/img/png/google.png")
+        uri_patch2 = self._get_patch("gui/img/png/facebook.png")
+        self.google_img = ctk.CTkImage(Image.open(uri_patch), size=(40, 40))
+        self.facebook_img = ctk.CTkImage(Image.open(uri_patch2), size=(40, 40))
+
+        # Boton de Google
+        self.google_btn = ctk.CTkButton(social_fm, image=self.google_img, text="Google", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"), border_width=1, border_color="#3A3A3A")
+        self.google_btn.pack(side=left, fill=x, expand=True, padx=(0, 10))
+
+        # Boton de Google
+        self.facebook_btn = ctk.CTkButton(social_fm, image=self.facebook_img, text="Facebook", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"),  border_width=1, border_color="#3A3A3A")
+        self.facebook_btn.pack(side=left, fill=x, expand=True)
+
 
     # ---------------- Funciones de interacción ---------------- #
+    # Funcion para mostrar la password en el CtkEntry
     def _toggle_password_visibility(self):
         if self.password_visible:
             self.password.configure(show="*")
+            self.password_confirm.configure(show="*")
             self.password_visible = False
             self.eye_btn.configure(image=self.view_enable)
         else:
             self.password.configure(show="")
+            self.password_confirm.configure(show="")
             self.password_visible = True
             self.eye_btn.configure(image=self.view_unable)
 

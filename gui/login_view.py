@@ -1,8 +1,10 @@
 # Importacion de librerias
 from utils.loggers import get_logger
+from utils.auth import sign_in, sign_up, sign_in_with_provider
 from pathlib import Path
 from PIL import Image, ImageTk
 import customtkinter as ctk
+from typing import Callable, Optional
 import tkinter as tk
 from tkinter import font
 import os
@@ -49,6 +51,9 @@ class LoginView(ctk.CTk):
 
         # Configuracion del system Dray cuando se cierra la ventana
         self.bind("<Destroy>", self._on_destroy)
+
+        # Variables de desarrollo dentro de funciones
+
 
         # Variables para campos de entrada
         self.password_visible = False
@@ -210,6 +215,7 @@ class LoginView(ctk.CTk):
         # Boton de crear cuenta
         self.send_btn = ctk.CTkButton(form_ctn, text="Crear Cuenta",fg_color="#7C4DFF", hover_color="#6B3FE6", corner_radius=8, height=40, font=("Arial", 16, "bold") )
         self.send_btn.pack(fill=x, pady=(0, 25))
+        self.send_btn.configure(command=self._on_create_account)
 
         # Separador "Or register Width "
         separate_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
@@ -239,13 +245,36 @@ class LoginView(ctk.CTk):
         # Boton de Google
         self.google_btn = ctk.CTkButton(social_fm, image=self.google_img, text="Google", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"), border_width=1, border_color="#3A3A3A")
         self.google_btn.pack(side=left, fill=x, expand=True, padx=(0, 10))
+        self.google_btn.configure(command=lambda: sign_in_with_provider("google"))
 
-        # Boton de Google
+
+        # Boton de Facebook
         self.facebook_btn = ctk.CTkButton(social_fm, image=self.facebook_img, text="Facebook", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"),  border_width=1, border_color="#3A3A3A")
         self.facebook_btn.pack(side=left, fill=x, expand=True)
+        self.facebook_btn.configure(command=lambda: sign_in_with_provider("facebook"))
 
 
     # ---------------- Funciones de interacción ---------------- #
+
+    #Funcion de creacion de la cuenta
+    def _on_create_account(self):
+        email = self.email.get()
+        email2 = self.email_verify.get()
+        password = self.password.get()
+        password2 = self.password_confirm.get()
+
+        # Validar que los correos sean iguales
+        if email != email2:
+            print("Error: los correos no son iguales")
+        if password != password2:
+            print("Error: Las contraseñas no son iguales")
+
+        succes, msg = sign_up(email, password)
+        if succes:
+            print(f"Exito: {msg} ")
+        else:
+            print(f"Exito: {msg} ")
+
     # Funcion para mostrar la password en el CtkEntry
     def _toggle_password_visibility(self):
         if self.password_visible:

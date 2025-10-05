@@ -28,8 +28,11 @@ ctk.set_default_color_theme(get_route_theme)
 
 
 class LoginView(ctk.CTk):
-    def __init__(self):
+    def __init__(self, on_login_sucess: Callable = None):
         super().__init__()
+
+        # Guardar el Callback 
+        self.on_login_sucess = on_login_sucess
 
         # Quitar barra nativa de Windows
         self.overrideredirect(True)
@@ -330,7 +333,7 @@ class LoginView(ctk.CTk):
             # Boton de crear cuenta
             self.send_btn = ctk.CTkButton(form_ctn, text="Ingresar",fg_color="#7C4DFF", hover_color="#6B3FE6", corner_radius=8, height=40, font=("Arial", 16, "bold") )
             self.send_btn.pack(fill=x, pady=(0, 25))
-            self.send_btn.configure(command=self._on_create_account)
+            self.send_btn.configure(command=self._on_login)
 
             # Separador "Or register Width "
             separate_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
@@ -381,14 +384,34 @@ class LoginView(ctk.CTk):
         # Validar que los correos sean iguales
         if email != email2:
             print("Error: los correos no son iguales")
+            return
         if password != password2:
             print("Error: Las contraseñas no son iguales")
+            return
+        
 
         succes, msg = sign_up(email, password)
         if succes:
             print(f"Exito: {msg} ")
+            if self.on_login_sucess:
+                self.on_login_sucess()
         else:
-            print(f"Exito: {msg} ")
+            print(f"Error: {msg} ")
+
+    # Funcion del login
+    def _on_login(self):
+        """Metodo para el ingreso """
+        email = self.email.get()
+        password = self.password.get()
+
+        succes, msg = sign_in(email, password)
+        if succes:
+            print(f"Login exitoso: {msg}")
+            if self.on_login_sucess:
+                self.on_login_sucess()
+
+        else:
+            print(f"Error de login: {msg}")
 
     # Funcion para mostrar la password en el CtkEntry
     def _toggle_password_visibility(self):
@@ -458,7 +481,6 @@ class LoginView(ctk.CTk):
             screen_height = self.winfo_screenheight()
             self.geometry(f"{screen_width}x{screen_height}+0+0")
             self.is_maximized = True
-
 
     # ---------------- Helpers ---------------- #
     def _get_patch(self, relative_patch: str) -> str:

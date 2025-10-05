@@ -65,78 +65,295 @@ class OAuthCallbackHandler(BaseHTTPRequestHandler):
         
         if auth_code:
             html_response = """
-            <html>
-            <head>
-                <title>Autenticación Exitosa</title>
-                <style>
-                    body { 
-                        font-family: Arial, sans-serif; 
-                        display: flex; 
-                        justify-content: center; 
-                        align-items: center; 
-                        height: 100vh; 
-                        margin: 0;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    }
-                    .container {
-                        background: white;
-                        padding: 40px;
-                        border-radius: 10px;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                        text-align: center;
-                    }
-                    h1 { color: #667eea; margin-bottom: 20px; }
-                    p { color: #666; }
-                    .success-icon { font-size: 60px; color: #4CAF50; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="success-icon">✓</div>
-                    <h1>¡Autenticación Exitosa!</h1>
-                    <p>Ya puedes cerrar esta ventana y volver a la aplicación.</p>
-                </div>
-                <script>
-                    setTimeout(() => { window.close(); }, 2000);
-                </script>
-            </body>
-            </html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Xent — Autenticación Exitosa</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-accent-1: #0f172a;
+      --accent: #00d084;
+      --muted: #9aa4b2;
+      --card-bg: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.08);
+      --max-width: 760px;
+      --radius: 14px;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;margin:0}
+    body{
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg,#0b1220 0%, #07122a 40%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+    }
+
+    .bg-wrap{
+      position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+    }
+    .bg-wrap::before{
+      content:"";position:absolute;inset:0;background-image: url('https://cdn.pixabay.com/photo/2017/02/17/13/20/space-2071142_1280.jpg');
+      background-size:cover;background-position:center;filter:blur(6px) brightness(0.45) saturate(0.9);
+      transform:scale(1.06);
+    }
+    .bg-wrap::after{
+      content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(3,7,18,0.35), rgba(3,7,18,0.6));
+    }
+
+    .card{
+      position:relative;z-index:2;max-width:var(--max-width);width:100%;
+      margin:0 auto;padding:28px;border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+      display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:center;
+      backdrop-filter: blur(6px) saturate(1.1);
+    }
+
+    @media (max-width:880px){
+      .card{grid-template-columns:1fr;}
+    }
+
+    .left{padding: 8px 8px;}
+
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+    .logo{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#0ea5a4,#06b6d4);
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:20px;box-shadow:0 6px 20px rgba(6,95,70,0.12);
+    }
+    .brand h2{margin:0;font-size:18px;letter-spacing:0.2px}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+    h1{margin:10px 0 6px;font-size:22px}
+    p.lead{margin:0;color:var(--muted);line-height:1.5}
+
+    .status{display:flex;gap:12px;align-items:center;margin-top:18px}
+
+    .badge{
+      width:84px;height:84px;border-radius:999px;background:linear-gradient(180deg, rgba(10,200,150,0.12), rgba(10,200,150,0.06));
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(0,0,0,0.12);
+      backdrop-filter: blur(4px);
+    }
+    .check{
+      width:54px;height:54px;display:inline-grid;place-items:center;border-radius:50%;background:linear-gradient(180deg,var(--accent),#00b36a);box-shadow:0 8px 18px rgba(0,208,132,0.18);color:#042014;font-weight:700;font-size:28px;transform:scale(0);animation:pop-in .6s cubic-bezier(.2,.9,.3,1) .15s forwards;
+    }
+    @keyframes pop-in{to{transform:scale(1)}}
+
+    .right{padding:12px;border-left:1px dashed rgba(255,255,255,0.03);min-width:220px;text-align:center}
+    @media (max-width:880px){.right{border-left:none;border-top:1px dashed rgba(255,255,255,0.03);}}
+
+    .info{font-size:13px;color:var(--muted);margin-top:6px}
+    .actions{margin-top:18px;display:flex;gap:10px;justify-content:center}
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#00b36a);color:#021a12;box-shadow:0 8px 20px rgba(0,208,132,0.12)}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+    .small{font-size:12px;color:var(--muted);margin-top:12px}
+
+    .sparkle{position:absolute;inset:auto -40px auto auto;width:160px;height:160px;opacity:0.08;filter:blur(2px);transform:rotate(22deg)}
+
+    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="bg-wrap" aria-hidden></div>
+
+  <main class="card" role="main" aria-labelledby="titulo">
+    <section class="left">
+      <div class="brand">
+        <div class="logo">X</div>
+        <div>
+          <h2 id="titulo">Xent — Autenticación Exitosa</h2>
+          <p>Conexión segura establecida con tu bot de trading</p>
+        </div>
+      </div>
+
+      <h1>¡Listo! Sesión autenticada</h1>
+      <p class="lead">Hemos recibido tu autorización. Puedes volver a la aplicación y continuar con tus operaciones. Esta ventana se cerrará automáticamente si fue abierta por la aplicación.</p>
+
+      <div class="status" aria-hidden>
+        <div class="badge" aria-hidden>
+          <div class="check">✓</div>
+        </div>
+        <div>
+          <div class="info"><strong>Usuario:</strong> <span id="user-email">usuario@ejemplo.com</span></div>
+          <div class="info"><strong>Conexión:</strong> Segura · Token válido</div>
+          <div class="small">Si la ventana no se cierra sola, pulsa "Volver a la App" o "Cerrar ventana".</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="open-app">Volver a la App</button>
+        <button class="btn btn-ghost" id="close">Cerrar ventana</button>
+      </div>
+
+      <footer>¿Problemas? Copia este código y pégalo en tu aplicación: <code id="code" style="background:rgba(255,255,255,0.03);padding:6px;border-radius:6px;margin-left:6px">ABCD-1234-EFGH</code></footer>
+    </section>
+
+    <aside class="right" aria-label="Panel de confirmación">
+      <img class="sparkle" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%23ffffff' stop-opacity='0.4'/><stop offset='1' stop-color='%23ffffff' stop-opacity='0.08'/></linearGradient></defs><rect width='200' height='200' fill='url(%23g)'/></svg>" alt="" />
+      <h3 style="margin:0 0 8px">Conexión segura</h3>
+      <p class="info">Xent ahora podrá operar según los permisos que autorizaste. Recomendamos revisar la configuración de permisos desde la app si necesitas restringir acciones.</p>
+
+      <div style="margin-top:14px">
+        <svg width="120" height="80" viewBox="0 0 120 80" aria-hidden>
+          <rect x="4" y="6" width="112" height="60" rx="8" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.04)"/>
+          <path d="M22 36 L46 52 L96 18" fill="none" stroke="rgba(0,208,132,0.9)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+    </aside>
+  </main>
+
+  <script>
+    const data = {
+      userEmail: window.__XENT_USER_EMAIL || 'usuario@ejemplo.com',
+      code: window.__XENT_CODE || 'ABCD-1234-EFGH'
+    };
+    document.getElementById('user-email').textContent = data.userEmail;
+    document.getElementById('code').textContent = data.code;
+
+    const tryClose = () => {
+      try { window.close(); } catch (e) {}
+    };
+
+    setTimeout(tryClose, 3000);
+
+    document.getElementById('close').addEventListener('click', tryClose);
+    document.getElementById('open-app').addEventListener('click', () => {
+      if (window.opener && typeof window.opener.postMessage === 'function') {
+        window.opener.postMessage({ type: 'XENT_AUTH_COMPLETE', payload: data }, '*');
+      }
+      tryClose();
+    });
+
+    document.getElementById('code').addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(data.code);
+        const prev = document.getElementById('code').textContent;
+        document.getElementById('code').textContent = 'Copiado ✔';
+        setTimeout(()=> document.getElementById('code').textContent = prev,1400);
+      }catch(e){}
+    });
+  </script>
+</body>
+</html>
+
             """
         else:
             html_response = """
-            <html>
-            <head>
-                <title>Error de Autenticación</title>
-                <style>
-                    body { 
-                        font-family: Arial, sans-serif; 
-                        display: flex; 
-                        justify-content: center; 
-                        align-items: center; 
-                        height: 100vh; 
-                        margin: 0;
-                        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                    }
-                    .container {
-                        background: white;
-                        padding: 40px;
-                        border-radius: 10px;
-                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                        text-align: center;
-                    }
-                    h1 { color: #f5576c; margin-bottom: 20px; }
-                    p { color: #666; }
-                    .error-icon { font-size: 60px; color: #f44336; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="error-icon">✗</div>
-                    <h1>Error de Autenticación</h1>
-                    <p>Hubo un problema al autenticarte. Por favor intenta nuevamente.</p>
-                </div>
-            </body>
-            </html>
+            <!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Xent — Error de Autenticación</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #f5576c;
+      --muted: #9aa4b2;
+      --radius: 14px;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    html, body {
+      height: 100%; margin: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0b1220 0%, #1a0a2a 100%);
+      color: #e6eef6;
+    }
+
+    .bg-wrap {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .bg-wrap::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url('https://cdn.pixabay.com/photo/2014/09/27/13/44/space-463848_1280.jpg');
+      background-size: cover; background-position: center;
+      filter: blur(6px) brightness(0.45);
+      transform: scale(1.06);
+    }
+    .bg-wrap::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(3,7,18,0.35), rgba(3,7,18,0.7));
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px) saturate(1.1);
+      max-width: 420px;
+    }
+
+    .error-icon {
+      font-size: 64px;
+      color: var(--accent);
+      animation: pulse 1.3s infinite ease-in-out;
+    }
+
+    h1 {
+      margin-top: 18px;
+      color: var(--accent);
+      font-size: 24px;
+    }
+
+    p {
+      color: var(--muted);
+      margin: 8px 0 22px;
+      line-height: 1.5;
+    }
+
+    .btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--muted);
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(245,87,108,0.3);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-wrap" aria-hidden></div>
+
+  <div class="card" role="alert">
+    <div class="error-icon">✗</div>
+    <h1>Error de Autenticación</h1>
+    <p>Hubo un problema al autenticarte. Por favor, intenta nuevamente o verifica tu conexión.</p>
+    <button class="btn" onclick="window.location.reload()">Reintentar</button>
+  </div>
+</body>
+</html>
+
             """
         
         self.wfile.write(html_response.encode())

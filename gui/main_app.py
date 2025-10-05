@@ -28,8 +28,8 @@ class MainApp(ctk.CTk):
         self.overrideredirect(True)
 
         # Tamaño inicial optimizado
-        self.geometry("900x650")
-        self.normal_geometry = "900x650"
+        self.geometry("1000x650")
+        self.normal_geometry = "1000x650"
         self.is_maximized = False
         self.tray_icon = None
         self.tray_thread = None
@@ -50,7 +50,7 @@ class MainApp(ctk.CTk):
 
     # ---------------- Barra de navegación ---------------- #
     def _title_navbar(self):
-        self.title_bar = ctk.CTkFrame(self, height=25, fg_color="#292934")
+        self.title_bar = ctk.CTkFrame(self, height=25, fg_color="#323243", border_width=0, corner_radius=0)
         self.title_bar.pack(fill="x", side="top")
 
         # Logo de la app
@@ -62,13 +62,13 @@ class MainApp(ctk.CTk):
                 size=(22, 22)
             )
             logo_label = ctk.CTkLabel(self.title_bar, image=self.logo, text="")
-            logo_label.pack(side="left", padx=6, pady=6)
+            logo_label.pack(side="left", padx=6, pady=5)
         except:
             # Si no se encuentra la imagen del logo, usar solo texto
             pass
 
         # Nombre de la app
-        app_name = ctk.CTkLabel(self.title_bar, text="Xentraders - Logout", font=("Arial", 14, "bold"), text_color="#FFFFFF")
+        app_name = ctk.CTkLabel(self.title_bar, text="Xentraders - Logout", font=("Arial", 12, "bold"), text_color="#D8D8D8")
         app_name.pack(side="left", padx=(12 if not hasattr(self, 'logo') else 0, 0))
 
         # Botones ventana
@@ -117,23 +117,18 @@ class MainApp(ctk.CTk):
 
     # ---------------- Contenido principal ---------------- #
     def _create_ui(self):
-        self.main_frame = ctk.CTkFrame(self, fg_color="transparent", corner_radius=0)
-        self.main_frame.pack(fill="both", expand=True)
+        # Contenedor principal
+        self.main_container = ctk.CTkFrame(self, fg_color="transparent", border_width=0, corner_radius=0)
+        self.main_container.pack(fill="both", expand=True)
 
-        self.notebook = ctk.CTkNotebook(self.main_frame)
-        self.notebook.pack(fill="both", expand=True)
-
-        # Crear pestañas directamente con su nombre
-        tab1 = self.notebook.add("Inicio")
-        tab2 = self.notebook.add("Opciones")
-        tab3 = self.notebook.add("Logs")
-
-        # Contenido de cada pestaña
-        ctk.CTkLabel(tab1, text="Contenido de Inicio").pack(pady=20)
-        ctk.CTkLabel(tab2, text="Aquí van configuraciones").pack(pady=20)
-        ctk.CTkLabel(tab3, text="Mensajes y logs").pack(pady=20)
-    
-    
+        # Contenedor del menu
+        main_menu = ctk.CTkFrame(self.main_container, width=200, border_width=0, corner_radius=0)
+        main_menu.pack(side="left", fill="y")
+        menu_title = ctk.CTkLabel(main_menu,text="Trading Bot", font=("Arial", 14, "bold"), text_color="#BEBEBE" )
+        menu_title.pack(padx=20)
+        #contenedor de frames informaticos
+        main_content = ctk.CTkFrame(self.main_container)
+        main_content.pack()
     # ---------------- Aqui van las funciones de la interface como componnentes ---------------- #
     def _add_tabs(self, root: any, title: str, contend: vars):
        frame = ctk.CTkFrame(self.notebook) 

@@ -28,5 +28,7 @@ class AppController:
           self.main_app.run()
 
 if __name__ == "__main__":
-     controller = AppController()
-     controller.start_login()
+     # controller = AppController()
+     # controller.start_login()
+     app = MainApp()
+     app.run()

@@ -384,30 +384,51 @@ class LoginView(ctk.CTk):
         logger.info(f"Iniciando autenticación con {provider}...")
         
         # Deshabilitar botones durante la autenticación
-        self.google_btn.configure(state="disabled", text="Autenticando...")
-        self.facebook_btn.configure(state="disabled")
+        try:
+            self.google_btn.configure(state="disabled", text="Autenticando...")
+            self.facebook_btn.configure(state="disabled")
+        except:
+            pass
         
         # Ejecutar autenticación en un hilo separado para no bloquear la UI
         def run_oauth():
-            success, msg = sign_in_with_provider(provider)
+            try:
+                result = sign_in_with_provider(provider)
+                
+                # Verificar que result sea una tupla
+                if not isinstance(result, tuple) or len(result) != 2:
+                    logger.error(f"Resultado inválido de sign_in_with_provider: {result}")
+                    success, msg = False, "Error en la autenticación"
+                else:
+                    success, msg = result
+                
+            except Exception as e:
+                logger.error(f"Excepción en run_oauth: {e}")
+                success, msg = False, f"Error: {str(e)}"
             
             # Ejecutar callback en el hilo principal de tkinter
             def update_ui():
-                # Restaurar botones
-                self.google_btn.configure(state="normal", text="Google")
-                self.facebook_btn.configure(state="normal")
-                
-                if success:
-                    logger.info(f"Login exitoso con {provider}: {msg}")
-                    print(f"✓ Autenticación exitosa con {provider}")
-                    if self.on_login_sucess:
-                        self.on_login_sucess()
-                else:
-                    logger.error(f"Error de login con {provider}: {msg}")
-                    print(f"✗ Error: {msg}")
-                    self._show_error_message(msg)
+                try:
+                    # Restaurar botones
+                    self.google_btn.configure(state="normal", text="Google")
+                    self.facebook_btn.configure(state="normal")
+                    
+                    if success:
+                        logger.info(f"Login exitoso con {provider}: {msg}")
+                        print(f"✓ Autenticación exitosa con {provider}")
+                        if self.on_login_sucess:
+                            self.on_login_sucess()
+                    else:
+                        logger.error(f"Error de login con {provider}: {msg}")
+                        print(f"✗ Error: {msg}")
+                        self._show_error_message(msg)
+                except Exception as e:
+                    logger.error(f"Error en update_ui: {e}")
             
-            self.after(0, update_ui)
+            try:
+                self.after(0, update_ui)
+            except:
+                pass
         
         oauth_thread = threading.Thread(target=run_oauth, daemon=True)
         oauth_thread.start()
@@ -554,16 +575,19 @@ class LoginView(ctk.CTk):
     def _update_connection_status(self):
         """Actualiza el indicador de estado de conexión"""
         try:
+            if not self.winfo_exists():
+                return
+                
             online = is_online()
             self.connection_indicator.configure(
                 text="● Online" if online else "● Offline",
                 text_color="#4CAF50" if online else "#FF5555"
             )
+            
+            # Programar próxima actualización
+            self.after(5000, self._update_connection_status)
         except:
             pass
-        
-        # Programar próxima actualización
-        self.after(5000, self._update_connection_status)
 
     def _on_destroy(self, event):
         if self.tray_icon:

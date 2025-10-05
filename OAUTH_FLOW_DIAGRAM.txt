@@ -1,0 +1,214 @@
+"""
+Diagrama del Flujo de Autenticación OAuth
+==========================================
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                    FLUJO DE AUTENTICACIÓN OAUTH                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+1. INICIO DEL PROCESO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    Usuario                    Aplicación Desktop
+       │                              │
+       │  Click "Google"              │
+       │  o "Facebook"                │
+       ├──────────────────────────────>
+       │                              │
+       │                       ┌──────────────┐
+       │                       │ Deshabilita  │
+       │                       │   botones    │
+       │                       └──────────────┘
+       │                              │
+
+
+2. INICIO DEL SERVIDOR LOCAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+       │                              │
+       │                       ┌──────────────┐
+       │                       │   Inicia     │
+       │                       │  servidor    │
+       │                       │ localhost:   │
+       │                       │     8000     │
+       │                       └──────────────┘
+       │                              │
+       │                              │
+       │                   (Servidor esperando...)
+
+
+3. APERTURA DEL NAVEGADOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+       │                              │
+       │                              │ GET OAuth URL
+       │                              ├─────────────────────>
+       │                              │                     Supabase
+       │                              │    <URL con token>
+       │                              │<─────────────────────
+       │                              │
+       │        Se abre navegador     │
+       │<─────────────────────────────┤
+       │                              │
+
+
+4. AUTENTICACIÓN EN NAVEGADOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    Navegador                   Google/Facebook           Supabase
+       │                              │                       │
+       │   GET OAuth URL              │                       │
+       ├──────────────────────────────>                       │
+       │                              │                       │
+       │   Formulario de login        │                       │
+       │<─────────────────────────────┤                       │
+       │                              │                       │
+   ┌───────┐                          │                       │
+   │Usuario│  Ingresa credenciales    │                       │
+   │selec- │  y autoriza app          │                       │
+   │ciona  │──────────────────────────>                       │
+   │cuenta │                          │                       │
+   └───────┘                          │                       │
+       │     Token de autorización    │                       │
+       │<─────────────────────────────┤                       │
+       │                              │                       │
+       │   Redirect con code          │                       │
+       ├───────────────────────────────────────────────────────>
+       │                              │                       │
+       │   Redirect a localhost:8000  │                       │
+       │<──────────────────────────────────────────────────────┤
+       │                              │                       │
+
+
+5. CAPTURA DEL TOKEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    Navegador              Servidor Local (puerto 8000)
+       │                              │
+       │  GET http://localhost:8000   │
+       │  ?access_token=XXXXX         │
+       ├──────────────────────────────>
+       │                              │
+       │                       ┌──────────────┐
+       │                       │  Captura     │
+       │                       │  el token    │
+       │                       └──────────────┘
+       │                              │
+       │     HTML: "¡Éxito!"          │
+       │<─────────────────────────────┤
+       │                              │
+       │                       ┌──────────────┐
+       │                       │   Cierra     │
+       │                       │  servidor    │
+       │                       └──────────────┘
+       │                              │
+
+
+6. PROCESAMIENTO DEL TOKEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                          Aplicación Desktop
+                                 │
+                          ┌──────────────┐
+                          │  Procesa     │
+                          │  el token    │
+                          └──────────────┘
+                                 │
+                          ┌──────────────┐
+                          │  Guarda      │
+                          │  sesión      │
+                          └──────────────┘
+                                 │
+                          ┌──────────────┐
+                          │  Habilita    │
+                          │  botones     │
+                          └──────────────┘
+                                 │
+                          ┌──────────────┐
+                          │  Ejecuta     │
+                          │  callback    │
+                          │  on_login_   │
+                          │  success()   │
+                          └──────────────┘
+                                 │
+                          ┌──────────────┐
+                          │  Abre panel  │
+                          │  principal   │
+                          └──────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════
+
+
+CONFIGURACIÓN REQUERIDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌─────────────────────┐
+│  SUPABASE CONFIG    │
+├─────────────────────┤
+│ Redirect URLs:      │
+│ • http://localhost: │
+│   8000              │
+│ • http://localhost: │
+│   8000/             │
+└─────────────────────┘
+
+┌─────────────────────┐       ┌─────────────────────┐
+│ GOOGLE CLOUD        │       │ FACEBOOK DEV        │
+├─────────────────────┤       ├─────────────────────┤
+│ Redirect URIs:      │       │ Valid OAuth URIs:   │
+│ • http://localhost: │       │ • http://localhost: │
+│   8000              │       │   8000              │
+│ • https://[supabase]│       │ • https://[supabase]│
+│   /auth/v1/callback │       │   /auth/v1/callback │
+└─────────────────────┘       └─────────────────────┘
+
+
+COMPONENTES DEL SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ┌──────────────────────────────────────────────────┐
+    │          LoginView (gui/login_view.py)           │
+    │                                                  │
+    │  • Botones de Google/Facebook                   │
+    │  • Manejo de eventos de UI                      │
+    │  • Callback de éxito/error                      │
+    └────────────────────┬─────────────────────────────┘
+                         │
+                         │ Llama a
+                         ▼
+    ┌──────────────────────────────────────────────────┐
+    │         Auth Module (utils/auth.py)              │
+    │                                                  │
+    │  • sign_in_with_provider(provider)              │
+    │  • start_callback_server()                      │
+    │  • OAuthCallbackHandler                         │
+    └────────────────────┬─────────────────────────────┘
+                         │
+                         │ Usa
+                         ▼
+    ┌──────────────────────────────────────────────────┐
+    │         Supabase Client                          │
+    │                                                  │
+    │  • supabase.auth.sign_in_with_oauth()           │
+    │  • Gestión de tokens                            │
+    │  • Verificación de sesiones                     │
+    └──────────────────────────────────────────────────┘
+
+
+PUNTOS CLAVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ El servidor local SOLO escucha mientras espera autenticación
+✓ Se cierra automáticamente después de recibir el callback
+✓ No requiere configuración de firewall (localhost)
+✓ Funciona sin necesidad de registrar protocolo personalizado
+✓ Compatible con Windows, Mac y Linux
+
+⚠ LIMITACIONES:
+  • Puerto 8000 debe estar disponible
+  • Requiere navegador web instalado
+  • Timeout de 120 segundos (configurable)
+
+"""

@@ -59,11 +59,6 @@ class LoginView(ctk.CTk):
         # Configuracion del system Dray cuando se cierra la ventana
         self.bind("<Destroy>", self._on_destroy)
 
-        # Variables de desarrollo dentro de funciones
-
-
-        
-
 
     # ---------------- Barra de navegación ---------------- #
     def _title_navbar(self):
@@ -81,7 +76,6 @@ class LoginView(ctk.CTk):
             logo_label = ctk.CTkLabel(self.title_bar, image=self.logo, text="")
             logo_label.pack(side="left", pady=4)
         except:
-            # Si no se encuentra la imagen del logo, usar solo texto
             pass
 
         # Nombre de la app
@@ -112,7 +106,6 @@ class LoginView(ctk.CTk):
                                     command=self._minimized_to_dray, corner_radius=0)
             min_btn.pack(side="right")
         except:
-            # Si no se encuentran los iconos, usar botones de texto
             close_btn = ctk.CTkButton(self.title_bar, text="✕", 
                                       fg_color="transparent", hover_color="#FF5555", width=35, height=30,
                                       command=self._close_wind, corner_radius=0, font=("Arial", 12))
@@ -135,296 +128,338 @@ class LoginView(ctk.CTk):
 
     # ---------------- Contenido principal ---------------- #
     def _create_ui(self):
-        # Frame principal sin padding para ocupar toda la ventana
         main_frame = ctk.CTkFrame(self, corner_radius=0)
         main_frame.pack(fill="both", expand=True, pady=0, padx=0)
 
-        if self.login == False:
-            # Columna izquierdo - Panel de imagen
-            left_frame = ctk.CTkFrame(main_frame, corner_radius=0, width=400, fg_color="transparent")
-            left_frame.pack(side="left", fill="y", padx=0, pady=0)
-            left_frame.pack_propagate(False)
+        # Panel izquierdo con imagen
+        left_frame = ctk.CTkFrame(main_frame, corner_radius=0, width=400, fg_color="transparent")
+        left_frame.pack(side="left", fill="y", padx=0, pady=0)
+        left_frame.pack_propagate(False)
 
-            # Imagen de portada Proximamente un carrusel
-            try:
-                hr_img = self._get_patch("gui/img/img/hero2.jpg")
-                bg_img = ctk.CTkImage(Image.open(hr_img), size=(320, 620))
-                bg_label = ctk.CTkLabel(left_frame, image=bg_img, text="", corner_radius=15)
-                bg_label.pack(expand=True, fill="y", pady=0, padx=0)
-            except:
-                # En caso de que no encuentre la imagen
-                placeholder_label= ctk.CTkLabel(left_frame, text="Background Image\n(hero1.jpg)", font=("Arial", 16), text_color="#FFFFFF")
-                placeholder_label.place(relx=0.5, rely=0.5, anchor="center")
+        try:
+            hr_img = self._get_patch("gui/img/img/hero2.jpg")
+            bg_img = ctk.CTkImage(Image.open(hr_img), size=(320, 620))
+            bg_label = ctk.CTkLabel(left_frame, image=bg_img, text="", corner_radius=15)
+            bg_label.pack(expand=True, fill="y", pady=0, padx=0)
+        except:
+            placeholder_label= ctk.CTkLabel(left_frame, text="Background Image\n(hero2.jpg)", 
+                                           font=("Arial", 16), text_color="#FFFFFF")
+            placeholder_label.place(relx=0.5, rely=0.5, anchor="center")
 
+        # Panel derecho con formulario
+        right_frame = ctk.CTkFrame(main_frame, fg_color="#1A1A1A", corner_radius=10)
+        right_frame.pack(side="right", expand=True, fill="both", pady=(10,10))
+        right_frame.pack_propagate(False)
 
+        form_ctn = ctk.CTkFrame(right_frame, fg_color="transparent")
+        form_ctn.pack(fill="both", expand=True, pady=20, padx=40)
 
-            # Columna Derecha - Panel de formulario
-            right_frame = ctk.CTkFrame(main_frame, fg_color="#1A1A1A", corner_radius=10)
-            right_frame.pack(side="right", expand=True, fill="both", pady=(10,10))
-            right_frame.pack_propagate(False)
-
-            # Contenedor del fromulario con padding
-            form_ctn = ctk.CTkFrame(right_frame, fg_color="transparent")
-            form_ctn.pack(fill="both", expand=True, pady=20, padx=40)
-
-            # Texto de si se tiene una cuenta
-            login_link_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            login_link_fm.pack(fill="x", pady=(0,30))
-
-            login_link_txt = ctk.CTkLabel(login_link_fm, text="¿Ya tienes una cuenta?", font=("Arial", 13), text_color="#8B8B8B")
-            login_link_txt.pack(side="left")
-
-            # Botón "Log in" SIN hover_color transparent
-            login_link_btn = ctk.CTkButton(login_link_fm, text="Ingresar.", font=("Arial", 13, "bold"), fg_color="transparent", text_color="#7C4DFF",text_color_disabled="#ffffff", width=50, height=20, hover_color="#272727", command=self._mode_login)
-            login_link_btn.pack(padx=(5,0), side="left")
-
-            # Titulo principal
-            title_frame = ctk.CTkLabel(form_ctn, text="Crear una Cuenta", font=("Arial", 28, "bold"), text_color="#FFFFFF")
-            title_frame.pack(anchor="w", pady=(0,10))
-
-            # Frame para campos de nombre
-            name_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            name_fm.pack(fill=x,  pady=(0, 20))
-
-            # Campos de nombres 
-            self.first_name = ctk.CTkEntry(name_fm, placeholder_text="Primer Nombre",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.first_name.pack(side=left, fill=x, expand=True, padx=(0, 10))
-            self.last_name = ctk.CTkEntry(name_fm, placeholder_text="Segundo Nombre",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.last_name.pack(side=left, fill=x, expand=True)
-
-            # Campo del email
-            self.email = ctk.CTkEntry(form_ctn, placeholder_text="Email",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.email.pack(fill=x, pady=(0,15))
-            self.email_verify = ctk.CTkEntry(form_ctn, placeholder_text="Confirmar Email",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.email_verify.pack(fill=x, pady=(0, 20))
-
-            # Frame para el campo de contraseña mas icono
-            password_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            password_fm.pack(fill=x, pady=(0, 20))
-
-            self.password = ctk.CTkEntry(password_fm, placeholder_text="Contraseña:", show="*", corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.password.pack(side=left, fill=x, expand=True, padx=(0,10))
-            self.password_confirm = ctk.CTkEntry(password_fm, placeholder_text="Repetir Contraseña:", show="*", corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.password_confirm.pack(side=left, fill=x, expand=True, padx=(0,10))
-
-            # Seccion para el boton de ver u ocultar
-            uri_patch = self._get_patch("gui/img/icons/cil-lock-unlocked.png")
-            uri_patch2 = self._get_patch("gui/img/icons/cil-lock-locked.png")
-            self.view_unable = ctk.CTkImage(Image.open(uri_patch2), size=(20, 20))
-            self.view_enable = ctk.CTkImage(Image.open(uri_patch), size=(20, 20))
-            self.eye_btn = ctk.CTkButton(password_fm,image=self.view_enable, text="", width=40, height=40, fg_color="transparent", hover_color="#3A3A3A", corner_radius=10, command=self._toggle_password_visibility)
-            self.eye_btn.pack(side=right)
-    
-            # CheckBox Terms & Condiction
-            self.terms_check = ctk.CTkCheckBox(form_ctn, text="Estoy de acuerdo con los Términos y Condiciones", font=("Arial", 13), text_color="#CCCCCC", checkbox_width=18, checkbox_height=18, corner_radius=4, border_width=2, fg_color="#7C4DFF", hover_color="#6B3FE6", border_color="#CCCCCC")
-            self.terms_check.pack(anchor="w", pady=(0, 25))
-
-            # Boton de crear cuenta
-            self.send_btn = ctk.CTkButton(form_ctn, text="Crear Cuenta",fg_color="#7C4DFF", hover_color="#6B3FE6", corner_radius=8, height=40, font=("Arial", 16, "bold") )
-            self.send_btn.pack(fill=x, pady=(0, 25))
-            self.send_btn.configure(command=self._on_create_account)
-
-            # Separador "Or register Width "
-            separate_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            separate_fm.pack(fill=x, pady=(0,25))
-
-            # Linea Izquierda 
-            ln_left = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
-            ln_left.pack(side=left, fill=x, expand=True, pady=10)
-
-            # Texto separador
-            sep_label = ctk.CTkLabel(separate_fm, text="Or register with", font=("Arial", 16), text_color="#8B8B8B")
-            sep_label.pack(side="left", padx=10)
-
-            ln_right = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
-            ln_right.pack(side=right, fill=x, expand=True, pady=10)
-
-            # Frame para botones de redes sociales
-            social_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            social_fm.pack(fill=x)
-
-            # Imagenes de facebook e Google
-            uri_patch = self._get_patch("gui/img/png/google.png")
-            uri_patch2 = self._get_patch("gui/img/png/facebook.png")
-            self.google_img = ctk.CTkImage(Image.open(uri_patch), size=(40, 40))
-            self.facebook_img = ctk.CTkImage(Image.open(uri_patch2), size=(40, 40))
-
-            # Boton de Google
-            self.google_btn = ctk.CTkButton(social_fm, image=self.google_img, text="Google", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"), border_width=1, border_color="#3A3A3A")
-            self.google_btn.pack(side=left, fill=x, expand=True, padx=(0, 10))
-            self.google_btn.configure(command=lambda: sign_in_with_provider("google"))
-
-
-            # Boton de Facebook
-            self.facebook_btn = ctk.CTkButton(social_fm, image=self.facebook_img, text="Facebook", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"),  border_width=1, border_color="#3A3A3A")
-            self.facebook_btn.pack(side=left, fill=x, expand=True)
-            self.facebook_btn.configure(command=lambda: sign_in_with_provider("facebook"))
-
+        if not self.login:
+            self._create_register_form(form_ctn)
         else:
-            # Columna izquierdo - Panel de imagen
-            left_frame = ctk.CTkFrame(main_frame, corner_radius=0, width=400, fg_color="transparent")
-            left_frame.pack(side="left", fill="y", padx=0, pady=0)
-            left_frame.pack_propagate(False)
+            self._create_login_form(form_ctn)
 
-            # Imagen de portada Proximamente un carrusel
-            try:
-                hr_img = self._get_patch("gui/img/img/hero2.jpg")
-                bg_img = ctk.CTkImage(Image.open(hr_img), size=(320, 620))
-                bg_label = ctk.CTkLabel(left_frame, image=bg_img, text="", corner_radius=15)
-                bg_label.pack(expand=True, fill="y", pady=0, padx=0)
-            except:
-                # En caso de que no encuentre la imagen
-                placeholder_label= ctk.CTkLabel(left_frame, text="Background Image\n(hero1.jpg)", font=("Arial", 16), text_color="#FFFFFF")
-                placeholder_label.place(relx=0.5, rely=0.5, anchor="center")
+    def _create_register_form(self, form_ctn):
+        """Crea el formulario de registro"""
+        # Enlace a login
+        login_link_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        login_link_fm.pack(fill="x", pady=(0,30))
 
+        login_link_txt = ctk.CTkLabel(login_link_fm, text="¿Ya tienes una cuenta?", 
+                                      font=("Arial", 13), text_color="#8B8B8B")
+        login_link_txt.pack(side="left")
 
+        login_link_btn = ctk.CTkButton(login_link_fm, text="Ingresar.", font=("Arial", 13, "bold"), 
+                                       fg_color="transparent", text_color="#7C4DFF", 
+                                       width=50, height=20, hover_color="#272727", 
+                                       command=self._mode_login)
+        login_link_btn.pack(padx=(5,0), side="left")
 
-            # Columna Derecha - Panel de formulario
-            right_frame = ctk.CTkFrame(main_frame, fg_color="#1A1A1A", corner_radius=10)
-            right_frame.pack(side="right", expand=True, fill="both", pady=(10,10))
-            right_frame.pack_propagate(False)
+        # Título
+        title_frame = ctk.CTkLabel(form_ctn, text="Crear una Cuenta", 
+                                   font=("Arial", 28, "bold"), text_color="#FFFFFF")
+        title_frame.pack(anchor="w", pady=(0,10))
 
-            # Contenedor del fromulario con padding
-            form_ctn = ctk.CTkFrame(right_frame, fg_color="transparent")
-            form_ctn.pack(fill="both", expand=True, pady=20, padx=40)
+        # Campos de nombre
+        name_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        name_fm.pack(fill=x, pady=(0, 20))
 
-            # Texto de si se tiene una cuenta
-            login_link_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            login_link_fm.pack(fill="x", pady=(0,30))
+        self.first_name = ctk.CTkEntry(name_fm, placeholder_text="Primer Nombre", corner_radius=8, 
+                                       height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", 
+                                       border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.first_name.pack(side=left, fill=x, expand=True, padx=(0, 10))
+        
+        self.last_name = ctk.CTkEntry(name_fm, placeholder_text="Segundo Nombre", corner_radius=8, 
+                                      height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", 
+                                      border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.last_name.pack(side=left, fill=x, expand=True)
 
-            login_link_txt = ctk.CTkLabel(login_link_fm, text="¿Aun no tienes una cuenta?", font=("Arial", 13), text_color="#8B8B8B")
-            login_link_txt.pack(side="left")
+        # Email
+        self.email = ctk.CTkEntry(form_ctn, placeholder_text="Email", corner_radius=8, height=40, 
+                                 font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", 
+                                 placeholder_text_color="#6B6B6B")
+        self.email.pack(fill=x, pady=(0,15))
+        
+        self.email_verify = ctk.CTkEntry(form_ctn, placeholder_text="Confirmar Email", corner_radius=8, 
+                                        height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", 
+                                        border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.email_verify.pack(fill=x, pady=(0, 20))
 
-            # Botón "Log in" SIN hover_color transparent
-            login_link_btn = ctk.CTkButton(login_link_fm, text="Crear.", font=("Arial", 13, "bold"), fg_color="transparent", text_color="#7C4DFF",text_color_disabled="#ffffff", width=50, height=20, hover_color="#272727", command=self._mode_login)
-            login_link_btn.pack(padx=(5,0), side="left")
+        # Contraseñas
+        password_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        password_fm.pack(fill=x, pady=(0, 20))
 
-            # Titulo principal
-            title_frame = ctk.CTkLabel(form_ctn, text="Ingresar ", font=("Arial", 28, "bold"), text_color="#FFFFFF")
-            title_frame.pack(anchor="w", pady=(0,10))
+        self.password = ctk.CTkEntry(password_fm, placeholder_text="Contraseña:", show="*", 
+                                    corner_radius=8, height=40, font=("Arial", 14, "bold"), 
+                                    fg_color="#2A2A2A", border_color="#3A3A3A", 
+                                    placeholder_text_color="#6B6B6B")
+        self.password.pack(side=left, fill=x, expand=True, padx=(0,10))
+        
+        self.password_confirm = ctk.CTkEntry(password_fm, placeholder_text="Repetir Contraseña:", 
+                                            show="*", corner_radius=8, height=40, 
+                                            font=("Arial", 14, "bold"), fg_color="#2A2A2A", 
+                                            border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.password_confirm.pack(side=left, fill=x, expand=True, padx=(0,10))
 
-            # Frame para campos de nombre
-            name_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            name_fm.pack(fill=x,  pady=(0, 20))
-
-            # Campos de nombres 
-            self.first_name = ctk.CTkEntry(name_fm, placeholder_text="Usuario: ",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.first_name.pack(side=left, fill=x, expand=True, padx=(0, 10))
-
-            # Campo del email
-            self.email = ctk.CTkEntry(form_ctn, placeholder_text="Email",corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.email.pack(fill=x, pady=(0,15))
-
-            # Frame para el campo de contraseña mas icono
-            password_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            password_fm.pack(fill=x, pady=(0, 20))
-
-            self.password = ctk.CTkEntry(password_fm, placeholder_text="Contraseña:", show="*", corner_radius=8, height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
-            self.password.pack(side=left, fill=x, expand=True, padx=(0,10))
-
-            # Seccion para el boton de ver u ocultar
+        # Botón ver contraseña
+        try:
             uri_patch = self._get_patch("gui/img/icons/cil-lock-unlocked.png")
             uri_patch2 = self._get_patch("gui/img/icons/cil-lock-locked.png")
             self.view_unable = ctk.CTkImage(Image.open(uri_patch2), size=(20, 20))
             self.view_enable = ctk.CTkImage(Image.open(uri_patch), size=(20, 20))
-            self.eye_btn = ctk.CTkButton(password_fm,image=self.view_enable, text="", width=40, height=40, fg_color="transparent", hover_color="#3A3A3A", corner_radius=10, command=self._toggle_password_visibility)
+            self.eye_btn = ctk.CTkButton(password_fm, image=self.view_enable, text="", width=40, 
+                                        height=40, fg_color="transparent", hover_color="#3A3A3A", 
+                                        corner_radius=10, command=self._toggle_password_visibility)
             self.eye_btn.pack(side=right)
+        except:
+            pass
 
-            # Boton de crear cuenta
-            self.send_btn = ctk.CTkButton(form_ctn, text="Ingresar",fg_color="#7C4DFF", hover_color="#6B3FE6", corner_radius=8, height=40, font=("Arial", 16, "bold") )
-            self.send_btn.pack(fill=x, pady=(0, 25))
-            self.send_btn.configure(command=self._on_login)
+        # Checkbox términos
+        self.terms_check = ctk.CTkCheckBox(form_ctn, text="Estoy de acuerdo con los Términos y Condiciones", 
+                                          font=("Arial", 13), text_color="#CCCCCC", checkbox_width=18, 
+                                          checkbox_height=18, corner_radius=4, border_width=2, 
+                                          fg_color="#7C4DFF", hover_color="#6B3FE6", border_color="#CCCCCC")
+        self.terms_check.pack(anchor="w", pady=(0, 25))
 
-            # Separador "Or register Width "
-            separate_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            separate_fm.pack(fill=x, pady=(0,25))
+        # Botón crear cuenta
+        self.send_btn = ctk.CTkButton(form_ctn, text="Crear Cuenta", fg_color="#7C4DFF", 
+                                     hover_color="#6B3FE6", corner_radius=8, height=40, 
+                                     font=("Arial", 16, "bold"), command=self._on_create_account)
+        self.send_btn.pack(fill=x, pady=(0, 25))
 
-            # Linea Izquierda 
-            ln_left = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
-            ln_left.pack(side=left, fill=x, expand=True, pady=10)
+        # Botones sociales
+        self._create_social_buttons(form_ctn, "Or register with")
 
-            # Texto separador
-            sep_label = ctk.CTkLabel(separate_fm, text="Continua con.", font=("Arial", 16), text_color="#8B8B8B")
-            sep_label.pack(side="left", padx=10)
+    def _create_login_form(self, form_ctn):
+        """Crea el formulario de login"""
+        # Enlace a registro
+        login_link_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        login_link_fm.pack(fill="x", pady=(0,30))
 
-            ln_right = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
-            ln_right.pack(side=right, fill=x, expand=True, pady=10)
+        login_link_txt = ctk.CTkLabel(login_link_fm, text="¿Aun no tienes una cuenta?", 
+                                      font=("Arial", 13), text_color="#8B8B8B")
+        login_link_txt.pack(side="left")
 
-            # Frame para botones de redes sociales
-            social_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
-            social_fm.pack(fill=x)
+        login_link_btn = ctk.CTkButton(login_link_fm, text="Crear.", font=("Arial", 13, "bold"), 
+                                       fg_color="transparent", text_color="#7C4DFF", 
+                                       width=50, height=20, hover_color="#272727", 
+                                       command=self._mode_login)
+        login_link_btn.pack(padx=(5,0), side="left")
 
-            # Imagenes de facebook e Google
+        # Título
+        title_frame = ctk.CTkLabel(form_ctn, text="Ingresar", font=("Arial", 28, "bold"), 
+                                   text_color="#FFFFFF")
+        title_frame.pack(anchor="w", pady=(0,10))
+
+        # Usuario (opcional)
+        name_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        name_fm.pack(fill=x, pady=(0, 20))
+
+        self.first_name = ctk.CTkEntry(name_fm, placeholder_text="Usuario (opcional)", corner_radius=8, 
+                                       height=40, font=("Arial", 14, "bold"), fg_color="#2A2A2A", 
+                                       border_color="#3A3A3A", placeholder_text_color="#6B6B6B")
+        self.first_name.pack(side=left, fill=x, expand=True, padx=(0, 10))
+
+        # Email
+        self.email = ctk.CTkEntry(form_ctn, placeholder_text="Email", corner_radius=8, height=40, 
+                                 font=("Arial", 14, "bold"), fg_color="#2A2A2A", border_color="#3A3A3A", 
+                                 placeholder_text_color="#6B6B6B")
+        self.email.pack(fill=x, pady=(0,15))
+
+        # Contraseña
+        password_fm = ctk.CTkFrame(form_ctn, fg_color="transparent")
+        password_fm.pack(fill=x, pady=(0, 20))
+
+        self.password = ctk.CTkEntry(password_fm, placeholder_text="Contraseña:", show="*", 
+                                    corner_radius=8, height=40, font=("Arial", 14, "bold"), 
+                                    fg_color="#2A2A2A", border_color="#3A3A3A", 
+                                    placeholder_text_color="#6B6B6B")
+        self.password.pack(side=left, fill=x, expand=True, padx=(0,10))
+
+        # Botón ver contraseña
+        try:
+            uri_patch = self._get_patch("gui/img/icons/cil-lock-unlocked.png")
+            uri_patch2 = self._get_patch("gui/img/icons/cil-lock-locked.png")
+            self.view_unable = ctk.CTkImage(Image.open(uri_patch2), size=(20, 20))
+            self.view_enable = ctk.CTkImage(Image.open(uri_patch), size=(20, 20))
+            self.eye_btn = ctk.CTkButton(password_fm, image=self.view_enable, text="", width=40, 
+                                        height=40, fg_color="transparent", hover_color="#3A3A3A", 
+                                        corner_radius=10, command=self._toggle_password_visibility)
+            self.eye_btn.pack(side=right)
+        except:
+            pass
+
+        # Botón ingresar
+        self.send_btn = ctk.CTkButton(form_ctn, text="Ingresar", fg_color="#7C4DFF", 
+                                     hover_color="#6B3FE6", corner_radius=8, height=40, 
+                                     font=("Arial", 16, "bold"), command=self._on_login)
+        self.send_btn.pack(fill=x, pady=(0, 25))
+
+        # Botones sociales
+        self._create_social_buttons(form_ctn, "Continua con")
+
+    def _create_social_buttons(self, parent, separator_text):
+        """Crea los botones de redes sociales"""
+        # Separador
+        separate_fm = ctk.CTkFrame(parent, fg_color="transparent")
+        separate_fm.pack(fill=x, pady=(0,25))
+
+        ln_left = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
+        ln_left.pack(side=left, fill=x, expand=True, pady=10)
+
+        sep_label = ctk.CTkLabel(separate_fm, text=separator_text, font=("Arial", 16), 
+                                text_color="#8B8B8B")
+        sep_label.pack(side="left", padx=10)
+
+        ln_right = ctk.CTkFrame(separate_fm, height=2, fg_color="#3A3A3A")
+        ln_right.pack(side=right, fill=x, expand=True, pady=10)
+
+        # Botones sociales
+        social_fm = ctk.CTkFrame(parent, fg_color="transparent")
+        social_fm.pack(fill=x)
+
+        try:
             uri_patch = self._get_patch("gui/img/png/google.png")
             uri_patch2 = self._get_patch("gui/img/png/facebook.png")
             self.google_img = ctk.CTkImage(Image.open(uri_patch), size=(40, 40))
             self.facebook_img = ctk.CTkImage(Image.open(uri_patch2), size=(40, 40))
 
-            # Boton de Google
-            self.google_btn = ctk.CTkButton(social_fm, image=self.google_img, text="Google", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"), border_width=1, border_color="#3A3A3A")
+            # Botón Google
+            self.google_btn = ctk.CTkButton(social_fm, image=self.google_img, text="Google", 
+                                           fg_color="#FFFFFF", text_color="#000000", 
+                                           hover_color="#D3CFFB", corner_radius=8, height=40, 
+                                           font=("Arial", 14, "bold"), border_width=1, 
+                                           border_color="#3A3A3A", 
+                                           command=lambda: self._handle_oauth_login("google"))
             self.google_btn.pack(side=left, fill=x, expand=True, padx=(0, 10))
-            self.google_btn.configure(command=lambda: sign_in_with_provider("google"))
 
-
-            # Boton de Facebook
-            self.facebook_btn = ctk.CTkButton(social_fm, image=self.facebook_img, text="Facebook", fg_color="#FFFFFF", text_color="#000000", hover_color="#D3CFFB", corner_radius=8, height=40, font=("Arial", 14, "bold"),  border_width=1, border_color="#3A3A3A")
+            # Botón Facebook
+            self.facebook_btn = ctk.CTkButton(social_fm, image=self.facebook_img, text="Facebook", 
+                                             fg_color="#FFFFFF", text_color="#000000", 
+                                             hover_color="#D3CFFB", corner_radius=8, height=40, 
+                                             font=("Arial", 14, "bold"), border_width=1, 
+                                             border_color="#3A3A3A", 
+                                             command=lambda: self._handle_oauth_login("facebook"))
             self.facebook_btn.pack(side=left, fill=x, expand=True)
-            self.facebook_btn.configure(command=lambda: sign_in_with_provider("facebook"))
+        except Exception as e:
+            logger.error(f"Error cargando imágenes sociales: {e}")
 
 
     # ---------------- Funciones de interacción ---------------- #
 
-    #Funcion de creacion de la cuenta
+    def _handle_oauth_login(self, provider: str):
+        """Maneja el login con OAuth (Google/Facebook)"""
+        logger.info(f"Iniciando autenticación con {provider}...")
+        
+        # Deshabilitar botones durante la autenticación
+        self.google_btn.configure(state="disabled", text="Autenticando...")
+        self.facebook_btn.configure(state="disabled")
+        
+        def oauth_callback(success, message):
+            """Callback que se ejecuta después de la autenticación OAuth"""
+            # Restaurar botones
+            self.google_btn.configure(state="normal", text="Google")
+            self.facebook_btn.configure(state="normal")
+            
+            if success:
+                logger.info(f"Login exitoso con {provider}: {message}")
+                print(f"✓ Autenticación exitosa con {provider}")
+                if self.on_login_sucess:
+                    self.on_login_sucess()
+            else:
+                logger.error(f"Error de login con {provider}: {message}")
+                print(f"✗ Error: {message}")
+                self._show_error_message(message)
+        
+        # Ejecutar autenticación en un hilo separado para no bloquear la UI
+        def run_oauth():
+            success, msg = sign_in_with_provider(provider, oauth_callback)
+            # Ejecutar callback en el hilo principal de tkinter
+            self.after(0, lambda: oauth_callback(success, msg))
+        
+        oauth_thread = threading.Thread(target=run_oauth, daemon=True)
+        oauth_thread.start()
+    
+    def _show_error_message(self, message: str):
+        """Muestra un mensaje de error al usuario"""
+        # Aquí puedes implementar un diálogo personalizado
+        print(f"❌ Error: {message}")
+
     def _on_create_account(self):
+        """Función de creación de la cuenta"""
         email = self.email.get()
         email2 = self.email_verify.get()
         password = self.password.get()
         password2 = self.password_confirm.get()
 
-        # Validar que los correos sean iguales
+        # Validaciones
         if email != email2:
             print("Error: los correos no son iguales")
             return
         if password != password2:
             print("Error: Las contraseñas no son iguales")
             return
-        
+        if not self.terms_check.get():
+            print("Error: Debes aceptar los términos y condiciones")
+            return
 
-        succes, msg = sign_up(email, password)
-        if succes:
-            print(f"Exito: {msg} ")
+        success, msg = sign_up(email, password)
+        if success:
+            print(f"Éxito: {msg}")
             if self.on_login_sucess:
                 self.on_login_sucess()
         else:
-            print(f"Error: {msg} ")
+            print(f"Error: {msg}")
 
-    # Funcion del login
     def _on_login(self):
-        """Metodo para el ingreso """
+        """Método para el ingreso"""
         email = self.email.get()
         password = self.password.get()
 
-        succes, msg = sign_in(email, password)
-        if succes:
+        success, msg = sign_in(email, password)
+        if success:
             print(f"Login exitoso: {msg}")
             if self.on_login_sucess:
                 self.on_login_sucess()
-
         else:
             print(f"Error de login: {msg}")
 
-    # Funcion para mostrar la password en el CtkEntry
     def _toggle_password_visibility(self):
+        """Alterna la visibilidad de la contraseña"""
         if self.password_visible:
             self.password.configure(show="*")
-            self.password_confirm.configure(show="*")
+            if hasattr(self, 'password_confirm'):
+                self.password_confirm.configure(show="*")
             self.password_visible = False
-            self.eye_btn.configure(image=self.view_enable)
+            if hasattr(self, 'eye_btn'):
+                self.eye_btn.configure(image=self.view_enable)
         else:
             self.password.configure(show="")
-            self.password_confirm.configure(show="")
+            if hasattr(self, 'password_confirm'):
+                self.password_confirm.configure(show="")
             self.password_visible = True
-            self.eye_btn.configure(image=self.view_unable)
+            if hasattr(self, 'eye_btn'):
+                self.eye_btn.configure(image=self.view_unable)
 
 
     # ---------------- Eventos de movimiento ventana ---------------- #
@@ -457,7 +492,7 @@ class LoginView(ctk.CTk):
                     pystray.MenuItem("Restaurar", self._restore_from_tray),
                     pystray.MenuItem("Salir", self._close_wind)
                 )
-                self.tray_icon = pystray.Icon("xentrader", tray_image, "AMU App", menu=menu)
+                self.tray_icon = pystray.Icon("xentrader", tray_image, "Xentraders App", menu=menu)
                 self.tray_thread = threading.Thread(target=self.tray_icon.run, daemon=True)
                 self.tray_thread.start()
             except Exception as e:
@@ -488,26 +523,21 @@ class LoginView(ctk.CTk):
         full_patch = base_dir / relative_patch
         if not full_patch.exists():
             logger.warning(f"Ruta no encontrada: {full_patch}")
-            # Retornar una ruta por defecto o crear un placeholder
-            return str(full_patch)
         return str(full_patch)
 
     def _mode_login(self):
+        """Alterna entre modo login y registro"""
         self.login = not self.login
-            # Encontrar el main_frame actual
+        
+        # Encontrar y destruir el main_frame actual
         for widget in self.winfo_children():
             if widget != self.title_bar and isinstance(widget, ctk.CTkFrame):
-                main_frame = widget
+                widget.destroy()
                 break
-        else:
-            main_frame = None
-    
-        if main_frame:
-            main_frame.destroy()
-    
-        # Recrear solo el contenido principal
+        
+        # Recrear la UI
         self._create_ui()
-        print(f"Cambiando el estado a: {self.login}")
+        logger.info(f"Modo cambiado a: {'Login' if self.login else 'Registro'}")
 
     def _on_destroy(self, event):
         if self.tray_icon:

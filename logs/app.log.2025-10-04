@@ -1,0 +1,16 @@
+2025-10-04 21:54:01,262 [INFO] xentrader_bot.gui.login_view: Iniciando autenticación con google...
+2025-10-04 21:54:18,251 [INFO] xentrader_bot.gui.login_view: Login exitoso con google: Autenticación exitosa
+2025-10-04 21:54:18,261 [ERROR] xentrader_bot.gui.login_view: Error de login con google: Error al procesar el token: 'charmap' codec can't encode character '\u2713' in position 0: character maps to <undefined>
+2025-10-04 21:55:13,940 [INFO] xentrader_bot.gui.login_view: Iniciando autenticación con facebook...
+2025-10-04 21:55:25,456 [INFO] xentrader_bot.gui.login_view: Login exitoso con facebook: Autenticación exitosa
+2025-10-04 21:55:25,466 [ERROR] xentrader_bot.gui.login_view: Error de login con facebook: Error al procesar el token: 'charmap' codec can't encode character '\u2713' in position 0: character maps to <undefined>
+2025-10-04 21:55:42,523 [INFO] xentrader_bot.gui.login_view: Modo cambiado a: Registro
+2025-10-04 22:15:48,143 [INFO] xentrader_bot.gui.login_view: Iniciando autenticación con google...
+2025-10-04 22:15:53,867 [INFO] xentrader_bot.gui.login_view: Login exitoso con google: Autenticación exitosa
+2025-10-04 22:16:31,589 [INFO] xentrader_bot.gui.login_view: Iniciando autenticación con google...
+2025-10-04 22:16:59,344 [INFO] xentrader_bot.gui.login_view: Login exitoso con google: Autenticación exitosa
+2025-10-04 22:17:34,006 [INFO] xentrader_bot.gui.login_view: Iniciando autenticación con google...
+2025-10-04 22:17:38,955 [INFO] xentrader_bot.gui.login_view: Login exitoso con google: Autenticación exitosa
+2025-10-04 22:17:38,955 [INFO] xentrader_bot.__main__: ==================================================
+2025-10-04 22:17:38,955 [INFO] xentrader_bot.__main__: ¡LOGIN EXITOSO!
+2025-10-04 22:17:38,955 [INFO] xentrader_bot.__main__: ==================================================

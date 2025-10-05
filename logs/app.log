@@ -1,4 +1,4 @@
-2025-08-31 02:41:25,686 [INFO] xentrader_bot.gui.login_view: C:\Users\EIDER\Desktop\xentraderBot\config\pydracula.json
-2025-08-31 02:41:46,013 [INFO] xentrader_bot.gui.login_view: C:\Users\EIDER\Desktop\xentraderBot\config\pydracula.json
-2025-08-31 03:13:45,795 [INFO] xentrader_bot.gui.login_view: c:\Users\EIDER\Desktop\xentraderBot\config\pydracula.json
-2025-08-31 03:14:51,101 [INFO] xentrader_bot.gui.login_view: c:\Users\EIDER\Desktop\xentraderBot\config\pydracula.json
+2025-10-05 05:58:22,955 [INFO] xentrader_bot.gui.login_view: Iniciando autenticación con google...
+2025-10-05 05:59:03,639 [INFO] xentrader_bot.gui.login_view: Modo cambiado a: Registro
+2025-10-05 06:00:23,078 [ERROR] xentrader_bot.gui.login_view: Error de login con google: Tiempo de espera agotado. No se recibió respuesta del navegador.
+2025-10-05 06:46:00,170 [INFO] xentrader_bot.gui.login_view: Iniciando autenticación con google...

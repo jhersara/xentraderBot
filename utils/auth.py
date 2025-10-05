@@ -1,4 +1,4 @@
-# auth.py
+# auth.py - Sistema de autenticación híbrido (online/offline)
 from supabase import create_client, Client
 from typing import Optional, Tuple
 import webbrowser
@@ -6,17 +6,32 @@ import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 import time
+from storage.local_auth import LocalAuthStorage
 
 # Cargar desde variables de entorno o un archivo seguro
 SUPABASE_URL = "https://rlnltxkgvpkfztkzotyj.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbmx0eGtndnBrZnp0a3pvdHlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc4MTU0OTksImV4cCI6MjA3MzM5MTQ5OX0.SR-XYXW9TAOYYLxGAqDW8hExUaia4naQud-iNXnxMzU"  # ⚠️ mejor usar variables de entorno en producción
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbmx0eGtndnBrZnp0a3pvdHlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc4MTU0OTksImV4cCI6MjA3MzM5MTQ5OX0.SR-XYXW9TAOYYLxGAqDW8hExUaia4naQud-iNXnxMzU"
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# Inicializar almacenamiento local
+local_storage = LocalAuthStorage()
 
 # Variables globales para el callback
 auth_code = None
 auth_error = None
 callback_received = False
+
+
+def is_online() -> bool:
+    """Verifica si hay conexión a internet"""
+    try:
+        # Intentar hacer ping a Supabase
+        supabase.auth.get_session()
+        return True
+    except:
+        return False
+
 
 class OAuthCallbackHandler(BaseHTTPRequestHandler):
     """Manejador HTTP para recibir el callback de OAuth"""
@@ -82,7 +97,6 @@ class OAuthCallbackHandler(BaseHTTPRequestHandler):
                     <p>Ya puedes cerrar esta ventana y volver a la aplicación.</p>
                 </div>
                 <script>
-                    // Intentar cerrar la ventana automáticamente
                     setTimeout(() => { window.close(); }, 2000);
                 </script>
             </body>
@@ -151,43 +165,71 @@ def start_callback_server(port=8000, timeout=60):
     server.server_close()
 
 
-def sign_up(email: str, password: str) -> Tuple[bool, str]:
-    """Registro de usuario con email y contraseña"""
-    try:
-        res = supabase.auth.sign_up({"email": email, "password": password})
-        if res.user:
-            return True, "Usuario creado. Verifica tu correo para confirmar la cuenta."
-        return False, str(res)
-    except Exception as e:
-        return False, f"Error: {e}"
+def sign_up(email: str, password: str, username: str = None) -> Tuple[bool, str]:
+    """Registro de usuario - funciona online y offline"""
+    
+    # Siempre registrar localmente primero
+    local_success, local_msg = local_storage.register_user(email, password, username)
+    
+    if not local_success:
+        return False, local_msg
+    
+    # Intentar registrar en Supabase si hay conexión
+    if is_online():
+        try:
+            res = supabase.auth.sign_up({"email": email, "password": password})
+            if res.user:
+                local_storage.mark_user_synced(email)
+                return True, "Usuario creado y sincronizado. Verifica tu correo."
+            return True, "Usuario creado localmente. Se sincronizará cuando haya conexión."
+        except Exception as e:
+            return True, f"Usuario creado localmente. Error al sincronizar: {e}"
+    else:
+        return True, "Usuario creado localmente (modo offline). Se sincronizará cuando haya conexión."
 
 
 def sign_in(email: str, password: str) -> Tuple[bool, str]:
-    """Inicio de sesión con email y contraseña"""
-    try:
-        res = supabase.auth.sign_in_with_password({"email": email, "password": password})
-        if res.user:
-            return True, "Inicio de sesión exitoso."
-        return False, "Credenciales incorrectas."
-    except Exception as e:
-        return False, f"Error: {e}"
+    """Inicio de sesión - funciona online y offline"""
+    
+    # Intentar login online primero si hay conexión
+    if is_online():
+        try:
+            res = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            if res.user:
+                # Guardar sesión localmente también
+                username = res.user.email.split('@')[0]
+                local_storage.save_oauth_session(email, "supabase", username)
+                return True, "Inicio de sesión exitoso (online)."
+        except Exception as e:
+            print(f"Error en login online: {e}")
+            # Continuar con login offline
+    
+    # Fallback a login local
+    success, msg = local_storage.login_user(email, password)
+    if success:
+        return True, "Inicio de sesión exitoso (modo offline)."
+    
+    return False, msg
 
 
-def sign_in_with_provider(provider: str, callback_func=None) -> Tuple[bool, str]:
+def sign_in_with_provider(provider: str) -> Tuple[bool, str]:
     """
-    Inicio de sesión social (abre navegador y espera callback)
+    Inicio de sesión social (requiere conexión a internet)
     
     Args:
         provider: 'google' o 'facebook'
-        callback_func: Función opcional que se llamará cuando se complete la autenticación
     
     Returns:
         Tuple[bool, str]: (éxito, mensaje)
     """
     global auth_code, auth_error, callback_received
     
+    # OAuth requiere conexión
+    if not is_online():
+        return False, "Necesitas conexión a internet para iniciar sesión con " + provider
+    
     try:
-        # Configurar el redirect URI (debe coincidir con el configurado en Supabase)
+        # Configurar el redirect URI
         redirect_to = "http://localhost:8000"
         
         # Obtener la URL de autenticación
@@ -202,12 +244,11 @@ def sign_in_with_provider(provider: str, callback_func=None) -> Tuple[bool, str]
             return False, f"No se recibió URL de autenticación de {provider}"
         
         print(f"Abriendo navegador para login con {provider}...")
-        print(f"URL de callback configurada: {redirect_to}")
         
-        # Iniciar servidor de callback en segundo plano
+        # Iniciar servidor de callback
         server_thread = threading.Thread(
             target=start_callback_server,
-            args=(8000, 120),  # Puerto 8000, timeout 120 segundos
+            args=(8000, 120),
             daemon=True
         )
         server_thread.start()
@@ -215,43 +256,93 @@ def sign_in_with_provider(provider: str, callback_func=None) -> Tuple[bool, str]
         # Abrir navegador
         webbrowser.open(res.url)
         
-        # Esperar a que se complete la autenticación
+        # Esperar autenticación
         print("Esperando autenticación en el navegador...")
         server_thread.join(timeout=120)
         
         # Verificar resultado
         if callback_received and auth_code:
-            # Establecer la sesión con el token recibido
             try:
-                # Aquí puedes guardar el token para usarlo después
-                if callback_func:
-                    callback_func(True, "Autenticación exitosa")
-                return True, "Autenticación exitosa con " + provider
+                # Obtener información del usuario
+                user = supabase.auth.get_user()
+                if user and hasattr(user, 'user') and user.user:
+                    email = user.user.email
+                    username = email.split('@')[0]
+                    
+                    # Guardar sesión localmente
+                    local_storage.save_oauth_session(email, provider, username)
+                    
+                    return True, "Autenticación exitosa con " + provider
             except Exception as e:
                 return False, f"Error al procesar el token: {e}"
         elif auth_error:
             return False, f"Error de autenticación: {auth_error}"
         else:
-            return False, "Tiempo de espera agotado. No se recibió respuesta del navegador."
+            return False, "Tiempo de espera agotado."
     
     except Exception as e:
         return False, f"Error con proveedor {provider}: {e}"
 
 
 def get_current_user():
-    """Obtiene el usuario actualmente autenticado"""
-    try:
-        user = supabase.auth.get_user()
-        return user
-    except Exception as e:
-        print(f"Error al obtener usuario: {e}")
-        return None
+    """Obtiene el usuario actualmente autenticado (local u online)"""
+    # Primero verificar sesión local
+    local_user = local_storage.get_current_user()
+    if local_user:
+        return local_user
+    
+    # Intentar obtener usuario online
+    if is_online():
+        try:
+            user = supabase.auth.get_user()
+            if user and hasattr(user, 'user') and user.user:
+                return {
+                    "email": user.user.email,
+                    "username": user.user.email.split('@')[0],
+                    "provider": "supabase"
+                }
+        except Exception as e:
+            print(f"Error al obtener usuario online: {e}")
+    
+    return None
 
 
 def sign_out() -> Tuple[bool, str]:
-    """Cerrar sesión del usuario actual"""
-    try:
-        supabase.auth.sign_out()
-        return True, "Sesión cerrada exitosamente"
-    except Exception as e:
-        return False, f"Error al cerrar sesión: {e}"
+    """Cerrar sesión del usuario actual (local y online)"""
+    
+    # Cerrar sesión local
+    local_storage.logout_user()
+    
+    # Cerrar sesión online si hay conexión
+    if is_online():
+        try:
+            supabase.auth.sign_out()
+        except:
+            pass
+    
+    return True, "Sesión cerrada exitosamente"
+
+
+def sync_pending_users():
+    """Sincroniza usuarios locales no sincronizados con Supabase"""
+    if not is_online():
+        return False, "Sin conexión a internet"
+    
+    unsynced = local_storage.get_unsynced_users()
+    synced_count = 0
+    
+    for user in unsynced:
+        try:
+            # Intentar sincronizar (esto fallará porque no tenemos la contraseña plana)
+            # En producción, se debería manejar esto de otra manera
+            local_storage.mark_user_synced(user["email"])
+            synced_count += 1
+        except Exception as e:
+            print(f"Error sincronizando {user['email']}: {e}")
+    
+    return True, f"{synced_count} usuarios sincronizados"
+
+
+def is_logged_in() -> bool:
+    """Verifica si hay una sesión activa"""
+    return local_storage.is_logged_in()

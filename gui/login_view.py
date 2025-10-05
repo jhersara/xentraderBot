@@ -1,6 +1,6 @@
 # Importacion de librerias
 from utils.loggers import get_logger
-from utils.auth import sign_in, sign_up, sign_in_with_provider
+from utils.auth import sign_in, sign_up, sign_in_with_provider, is_online
 from pathlib import Path
 from PIL import Image, ImageTk
 import customtkinter as ctk
@@ -81,6 +81,18 @@ class LoginView(ctk.CTk):
         # Nombre de la app
         app_name = ctk.CTkLabel(self.title_bar, text="Xentraders - Logout", font=("Arial", 14, "bold"), text_color="#FFFFFF")
         app_name.pack(side="left", padx=(12 if not hasattr(self, 'logo') else 0, 0))
+
+        # Indicador de estado de conexión
+        self.connection_indicator = ctk.CTkLabel(
+            self.title_bar, 
+            text="● Online" if is_online() else "● Offline",
+            font=("Arial", 11),
+            text_color="#4CAF50" if is_online() else "#FF5555"
+        )
+        self.connection_indicator.pack(side="left", padx=15)
+        
+        # Actualizar indicador cada 5 segundos
+        self._update_connection_status()
 
         # Botones ventana
         try:
@@ -375,27 +387,27 @@ class LoginView(ctk.CTk):
         self.google_btn.configure(state="disabled", text="Autenticando...")
         self.facebook_btn.configure(state="disabled")
         
-        def oauth_callback(success, message):
-            """Callback que se ejecuta después de la autenticación OAuth"""
-            # Restaurar botones
-            self.google_btn.configure(state="normal", text="Google")
-            self.facebook_btn.configure(state="normal")
-            
-            if success:
-                logger.info(f"Login exitoso con {provider}: {message}")
-                print(f"✓ Autenticación exitosa con {provider}")
-                if self.on_login_sucess:
-                    self.on_login_sucess()
-            else:
-                logger.error(f"Error de login con {provider}: {message}")
-                print(f"✗ Error: {message}")
-                self._show_error_message(message)
-        
         # Ejecutar autenticación en un hilo separado para no bloquear la UI
         def run_oauth():
-            success, msg = sign_in_with_provider(provider, oauth_callback)
+            success, msg = sign_in_with_provider(provider)
+            
             # Ejecutar callback en el hilo principal de tkinter
-            self.after(0, lambda: oauth_callback(success, msg))
+            def update_ui():
+                # Restaurar botones
+                self.google_btn.configure(state="normal", text="Google")
+                self.facebook_btn.configure(state="normal")
+                
+                if success:
+                    logger.info(f"Login exitoso con {provider}: {msg}")
+                    print(f"✓ Autenticación exitosa con {provider}")
+                    if self.on_login_sucess:
+                        self.on_login_sucess()
+                else:
+                    logger.error(f"Error de login con {provider}: {msg}")
+                    print(f"✗ Error: {msg}")
+                    self._show_error_message(msg)
+            
+            self.after(0, update_ui)
         
         oauth_thread = threading.Thread(target=run_oauth, daemon=True)
         oauth_thread.start()
@@ -538,6 +550,20 @@ class LoginView(ctk.CTk):
         # Recrear la UI
         self._create_ui()
         logger.info(f"Modo cambiado a: {'Login' if self.login else 'Registro'}")
+
+    def _update_connection_status(self):
+        """Actualiza el indicador de estado de conexión"""
+        try:
+            online = is_online()
+            self.connection_indicator.configure(
+                text="● Online" if online else "● Offline",
+                text_color="#4CAF50" if online else "#FF5555"
+            )
+        except:
+            pass
+        
+        # Programar próxima actualización
+        self.after(5000, self._update_connection_status)
 
     def _on_destroy(self, event):
         if self.tray_icon:

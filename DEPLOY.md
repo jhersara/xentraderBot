@@ -1,8 +1,8 @@
 # Check list de desarrollo
-- ### [ x ] Estructura base creada.
-- ### [ ] App arranca y muestra navegacion basica
-- ### [ ] Login -> Mian(flujo completo)
-- ### [ ] Config leida desde archivos locales
+- ### [x] Estructura base creada.
+- ### [x] App arranca y muestra navegacion basica
+- ### [x] Login -> Mian(flujo completo)
+- ### [x] Config leida desde archivos locales
 - ### [ ] Dashboard con datos mock
 - ### [ ] Conexion real con el broker
 - ### [ ] Trading manual operatiuvo.

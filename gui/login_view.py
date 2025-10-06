@@ -62,7 +62,7 @@ class LoginView(ctk.CTk):
 
     # ---------------- Barra de navegación ---------------- #
     def _title_navbar(self):
-        self.title_bar = ctk.CTkFrame(self, height=30, fg_color="#323243", border_width=0, corner_radius=0)
+        self.title_bar = ctk.CTkFrame(self, height=30, fg_color="#1E1E2E", border_width=0, corner_radius=0)
         self.title_bar.pack(fill="x", side="top")
 
         # Logo de la app

@@ -10,6 +10,7 @@ import threading
 
 # Importacion de paginas
 from .pages.config_mt5 import ConfigMT5Page
+from .pages.dashboard_view import DashboardView
 
 # Llamada al log 
 logger = get_logger(__name__)
@@ -134,7 +135,7 @@ class MainApp(ctk.CTk):
         self.content_area.pack(fill="both", expand=True)
 
         # Contenido por defecto
-        #self._show_config_mt5()
+        self._show_dashboard()
 
     # Funcion para los botones y labels
     def _create_sidebar(self):
@@ -364,53 +365,57 @@ class MainApp(ctk.CTk):
 
             # Mostrar el texto en los botones
             for btn in self.all_menu_buttons:
-                if hasattr(btn, 'text_label'):
+                if hasattr(btn, 'text_label') and isinstance(btn, ctk.CTkButton):
+                    btn.configure(hover_color="#313244")
                     btn.text_label.pack(side="left", padx=5, fill="x", expand=True)
 
             self.menu_expanded = True
 
     # ---------------- Funciones de navegación de paginas---------------- #
+    def _clear_content(self):
+        """Limpia el area de un contenido"""
+        for widget in self.content_area.winfo_children():
+            widget.destroy()
     def _show_dashboard(self):
         """Muestra el dashboard con información financiera"""
-        pass
+        self._clear_content()
 
+        # Configuramos el grid layout
+        dashboard = DashboardView(
+            self.content_area,
+            balance=self.balance,
+            profit_loss=self.profit_loss,
+            open_positions=self.open_positions
+        )
+        dashboard.pack(fill="both", expand=True)
+        
     def _show_manual_trading(self):
         """Muestra trading manual"""
         pass
-
     def _show_auto_trading(self):
         """Muestra trading automático"""
-
     def _show_charts(self):
         """"""
-    
     def _show_analysis(self):
         """"""
-
     def _show_logs(self):
         """"""
-
     def _show_alerts(self):
         """"""
-
     def _show_config_mt5(self):
         """Muestra la pagina de configuracion a MT5"""
         # Limpia el contenido actual
-        for widget in self.content_area.winfo_children():
-            widget.destroy()
+        self._clear_content()
 
         # Carga el Frame desde pages/config_mt5.py
         newFrame = ConfigMT5Page(self.content_area)
-        newFrame.pack(fill="both", expand=True)
-    
+        newFrame.pack(fill="both", expand=True)    
     def _show_settings(self):
         """"""
     def _show_profile(self):
         """"""
     def  _logout(self):
         """"""
-
-
 
     # ---------------- Eventos de movimiento ventana ---------------- #
     def _start_move(self, event):
@@ -421,7 +426,6 @@ class MainApp(ctk.CTk):
         deltax = event.x - self.x
         deltay = event.y - self.y
         self.geometry(f"+{self.winfo_x() + deltax}+{self.winfo_y() + deltay}")
-
 
     # ---------------- Eventos de control ventana ---------------- #
     def _close_wind(self):

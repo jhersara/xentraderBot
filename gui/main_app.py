@@ -8,6 +8,9 @@ import os
 import pystray
 import threading
 
+# Importacion de paginas
+from .pages.config_mt5 import ConfigMT5Page
+
 # Llamada al log 
 logger = get_logger(__name__)
 
@@ -26,15 +29,15 @@ class MainApp(ctk.CTk):
         self.overrideredirect(True)
 
         # Tamaño inicial optimizado
-        self.geometry("1000x650")
-        self.normal_geometry = "1000x650"
+        self.geometry("1150x750")
+        self.normal_geometry = "1150x750"
         self.is_maximized = False
         self.tray_icon = None
         self.tray_thread = None
 
         # Estado del menú lateral
         self.menu_expanded = False
-        self.menu_width_collapsed = 45
+        self.menu_width_collapsed = 50
         self.menu_width_expanded = 170
 
         # Datos simulados del dashboard
@@ -51,7 +54,6 @@ class MainApp(ctk.CTk):
 
         # Configuracion del system tray cuando se cierra la ventana
         self.bind("<Destroy>", self._on_destroy)
-
 
     # ---------------- Barra de navegación superior ---------------- #
     def _title_navbar(self):
@@ -83,7 +85,7 @@ class MainApp(ctk.CTk):
 
             self.close_icon = ctk.CTkImage(Image.open(close_ico), size=(12, 12))
             close_btn = ctk.CTkButton(self.title_bar, image=self.close_icon, text="",
-                                      fg_color="transparent", hover_color="#F38BA8", width=45, height=32,
+                                      fg_color="transparent", hover_color="#FC3B72", width=45, height=32,
                                       command=self._close_wind, corner_radius=0)
             close_btn.pack(side="right")
 
@@ -100,7 +102,7 @@ class MainApp(ctk.CTk):
             min_btn.pack(side="right")
         except:
             close_btn = ctk.CTkButton(self.title_bar, text="✕", 
-                                      fg_color="transparent", hover_color="#F38BA8", width=45, height=32,
+                                      fg_color="transparent", hover_color="#FC3B72", width=45, height=32,
                                       command=self._close_wind, corner_radius=0, font=("Arial", 12))
             close_btn.pack(side="right")
 
@@ -118,7 +120,6 @@ class MainApp(ctk.CTk):
         self.title_bar.bind("<Button-1>", self._start_move)
         self.title_bar.bind("<B1-Motion>", self._do_move)
 
-
     # ---------------- Contenido principal ---------------- #
     def _create_ui(self):
         # Contenedor principal
@@ -132,6 +133,10 @@ class MainApp(ctk.CTk):
         self.content_area = ctk.CTkFrame(self.main_container, fg_color="transparent", corner_radius=0)
         self.content_area.pack(fill="both", expand=True)
 
+        # Contenido por defecto
+        #self._show_config_mt5()
+
+    # Funcion para los botones y labels
     def _create_sidebar(self):
             """Crear barra lateral expandible"""
             self.sidebar = ctk.CTkFrame(
@@ -164,7 +169,7 @@ class MainApp(ctk.CTk):
             self.btn_hamburger.pack(expand=True)
             
             # Separador
-            sep1 = ctk.CTkFrame(self.sidebar, height=1, fg_color="#313244")
+            sep1 = ctk.CTkFrame(self.sidebar, height=2, fg_color="#313244")
             sep1.pack(fill="x", padx=10, pady=5)
 
             # SECCION PRINCIPAL
@@ -174,13 +179,78 @@ class MainApp(ctk.CTk):
                 {"name": "Dashboard", "icon": "cil-home.png", "command": self._show_dashboard, "color": "#89B4FA"},
                 {"name": "Trading Manual", "icon": "cil-cursor.png", "command": self._show_manual_trading, "color": "#F9E2AF"},
                 {"name": "Trading Auto", "icon": "cil-av-timer.png", "command": self._show_auto_trading, "color": "#A6E3A1"},
+                {"name": "Config. MT5", "icon": "cil-settings.png", "command": self._show_config_mt5, "color": "#B4BEFE"},
+
             ]
             
             self.menu_buttons_main = []
             for item in self.menu_items_main:
                 btn = self._create_menu_button(item)
                 self.menu_buttons_main.append(btn)
+            
+            # Separador
+            sep2 = ctk.CTkFrame(self.sidebar, height=2, fg_color="#313244")
+            sep2.pack(fill="x", padx=10, pady=10)
 
+            # SECCIÓN ANÁLISIS
+            self._create_section_label("ANÁLISIS")
+        
+            self.menu_items_analysis = [
+                {"name": "Gráficos", "icon": "cil-chart-line.png", "command": self._show_charts, "color": "#CBA6F7"},
+                {"name": "Análisis", "icon": "cil-chart-pie.png", "command": self._show_analysis, "color": "#F5C2E7"},
+            ]
+
+            self.menu_buttons_analysis = []
+            for item in self.menu_items_analysis:
+                btn = self._create_menu_button(item)
+                self.menu_buttons_analysis.append(btn)
+
+            # Separador
+            sep3 = ctk.CTkFrame(self.sidebar, height=2, fg_color="#313244")
+            sep3.pack(fill="x", padx=10, pady=10)
+
+            # SECCIÓN SISTEMA
+            self._create_section_label("SISTEMA")
+        
+            self.menu_items_system = [
+                {"name": "Logs", "icon": "cil-file.png", "command": self._show_logs, "color": "#94E2D5"},
+                {"name": "Alertas", "icon": "cil-bell.png", "command": self._show_alerts, "color": "#FAB387"},
+            ]
+
+            self.menu_buttons_system = []
+            for item in self.menu_items_system:
+                btn = self._create_menu_button(item)
+                self.menu_buttons_system.append(btn)
+            
+            # Espaciador flexible
+            spacer = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+            spacer.pack(fill="both", expand=True)
+
+            # Separador antes de la parte inferior
+            sep4 = ctk.CTkFrame(self.sidebar, height=2, fg_color="#313244")
+            sep4.pack(fill="x", padx=10, pady=5)
+
+            # SECCIÓN USUARIO (al final)
+            self.menu_items_user = [
+                {"name": "Configuración", "icon": "cil-settings.png", "command": self._show_settings, "color": "#B4BEFE"},
+                {"name": "Perfil", "icon": "cil-user.png", "command": self._show_profile, "color": "#89DCEB"},
+                {"name": "Cerrar Sesión", "icon": "cil-account-logout.png", "command": self._logout, "color": "#F38BA8"},
+            ]
+
+            self.menu_buttons_user = []
+            for items in self.menu_items_user:
+                btn = self._create_menu_button(items, bottom=True)
+                self.menu_buttons_user.append(btn)
+
+            # Combinar todas las celdas de listas de bottones
+            self.all_menu_buttons = (
+                self.menu_buttons_main +
+                self.menu_buttons_analysis +
+                self.menu_buttons_system +
+                self.menu_buttons_user
+            )
+    
+    # Funcion para crear los textos de informacion (btn)
     def _create_section_label(self, text):
         """Crea etiquetas de seccion"""
         self.section_label = ctk.CTkLabel(
@@ -191,28 +261,115 @@ class MainApp(ctk.CTk):
             anchor="w"
         )
         self.section_label.pack(fill="x", padx=15, pady=(5,3))
+        self.section_label.section_text = text
 
+    # Funcion para crear e iterar los bottones
     def _create_menu_button(self, item, bottom=False):
         """Crea un boton del menu con icono y texto"""
-        btn_frame = ctk.CTkFrame(self.sidebar, height=52)
-        btn_frame.pack(fill="x", padx=8, pady=2)
+        btn_frame = ctk.CTkFrame(self.sidebar, height=52, fg_color="transparent")
+        btn_frame.pack(fill="x", padx=2, pady=2)
         btn_frame.pack_propagate(False)
+
+        # Inteta gargar el icono correspondiente
+        try:
+            # Cargamos la ruta de nuestros iconos
+            icon_patch = self._get_patch(f"gui/img/icons/{item['icon']}")
+            icon_image = ctk.CTkImage(
+                light_image=Image.open(icon_patch),
+                dark_image=Image.open(icon_patch),
+                size=(22, 22),
+            )
+                
+            # Creamos los campos de btn Img
+            btn = ctk.CTkButton(
+                btn_frame,
+                image=icon_image,
+                text="",
+                width=45,
+                height=45,
+                fg_color="transparent",
+                hover_color="#313244",
+                command=item["command"],
+                corner_radius=10,
+                font=("Segoe UI", 16),
+                text_color=item.get("color", "#CDD6F4")
+
+            )
+            btn.icon_image = icon_image
+        except Exception as e:
+            logger.warning(f"No se pudo cargar icono {item['icon']}: {e}")
+            btn = ctk.CTkButton(
+                btn_frame,
+                text="●",
+                width=50,
+                height=48,
+                fg_color="transparent",
+                hover_color="#313244",
+                command=item["command"],
+                corner_radius=10,
+                font=("Segoe UI", 16),
+                text_color=item.get("color", "#CDD6F4")
+            )
+
+        btn.pack(side="left")
+
+        # Añadir el label clikeable (Inicialmente oculto)
+        label = ctk.CTkLabel(
+            btn_frame,
+            text=item["name"],
+            font=("Segoe UI", 12, "bold"),
+            text_color=item.get("color", "#CDD6F4"),
+            anchor="w",
+            cursor="hand2"
+        )
+
+        # Hacer el label clickeable
+        label.bind("<Button-1>", lambda e: item["command"]())
+        label.bind("<Enter>", lambda e: btn.configure(fg_color="#313244"))
+        label.bind("<Leave>", lambda e: btn.configure(fg_color="transparent"))
+
+        # Guardar referencia
+        btn.text_label = label
+        btn.item_name = item["name"]
+        btn.item_color = item.get("color", "#CDD6F4")
+
+        return btn
 
     # Funcion que hace que la barra lateral se expanda
     def _togle_menu(self):
+        """Expande o colapsa el menu lateralal"""
         if self.menu_expanded:
             # Colapsar
             self.sidebar.configure(width=self.menu_width_collapsed)
+
+            # Ocultamos etiquetas de seccion
+            for widget in self.sidebar.winfo_children():
+                if isinstance(widget, ctk.CTkLabel) and hasattr(widget, 'section_text'):
+                    widget.configure(text="")
+            
+            # Ocultar texto de botones
+            for btn in self.all_menu_buttons:
+                if hasattr(btn, 'text_label'):
+                    btn.text_label.pack_forget()
 
             self.menu_expanded = False
         else:
             # Expandir
             self.sidebar.configure(width=self.menu_width_expanded)
 
+            # Mostrar las etiquetas de seccion
+            for widget in self.sidebar.winfo_children():
+                if isinstance(widget, ctk.CTkLabel) and hasattr(widget, 'section_text'):
+                    widget.configure(text=widget.section_text)
+
+            # Mostrar el texto en los botones
+            for btn in self.all_menu_buttons:
+                if hasattr(btn, 'text_label'):
+                    btn.text_label.pack(side="left", padx=5, fill="x", expand=True)
+
             self.menu_expanded = True
 
-    
-    # ---------------- Funciones de navegación ---------------- #
+    # ---------------- Funciones de navegación de paginas---------------- #
     def _show_dashboard(self):
         """Muestra el dashboard con información financiera"""
         pass
@@ -224,7 +381,35 @@ class MainApp(ctk.CTk):
     def _show_auto_trading(self):
         """Muestra trading automático"""
 
-      
+    def _show_charts(self):
+        """"""
+    
+    def _show_analysis(self):
+        """"""
+
+    def _show_logs(self):
+        """"""
+
+    def _show_alerts(self):
+        """"""
+
+    def _show_config_mt5(self):
+        """Muestra la pagina de configuracion a MT5"""
+        # Limpia el contenido actual
+        for widget in self.content_area.winfo_children():
+            widget.destroy()
+
+        # Carga el Frame desde pages/config_mt5.py
+        newFrame = ConfigMT5Page(self.content_area)
+        newFrame.pack(fill="both", expand=True)
+    
+    def _show_settings(self):
+        """"""
+    def _show_profile(self):
+        """"""
+    def  _logout(self):
+        """"""
+
 
 
     # ---------------- Eventos de movimiento ventana ---------------- #

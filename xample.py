@@ -52,7 +52,6 @@ class MainApp(ctk.CTk):
         # Configuracion del system tray cuando se cierra la ventana
         self.bind("<Destroy>", self._on_destroy)
 
-
     # ---------------- Barra de navegación superior ---------------- #
     def _title_navbar(self):
         self.title_bar = ctk.CTkFrame(self, height=32, fg_color="#1E1E2E", border_width=0, corner_radius=0)
@@ -245,7 +244,6 @@ class MainApp(ctk.CTk):
             self.menu_buttons_system + 
             self.menu_buttons_user
         )
-
 
     def _create_section_label(self, text):
         """Crea una etiqueta de sección"""

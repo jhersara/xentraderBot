@@ -9,16 +9,17 @@ from utils.loggers import get_logger
 logger = get_logger(__name__)
 
 
-# Funciones principales
-# Funcion inicial
+def show_main_app():
+    """Muestra la aplicación principal después del login exitoso"""
+    # Cerrar ventana de login
+    login_window.destroy()
+    
+    # Abrir aplicación principal
+    main_app = MainApp()
+    main_app.run()
 
-# Ejecutador del codigo principal
-# if __name__ == "__main__":
-#      app = MainApp()
-#      app.run()
 
 if __name__ == "__main__":
-     # app = LoginView()
-     # app.run()
-     app = MainApp()
-     app.run()
+    # Crear ventana de login con callback
+    login_window = LoginView(on_login_sucess=show_main_app)
+    login_window.run()

@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 def show_main_app():
     """Muestra la aplicación principal después del login exitoso"""
     # Cerrar ventana de login
-    login_window.destroy()
+    #login_window.destroy()
     
     # Abrir aplicación principal
     main_app = MainApp()
@@ -21,5 +21,8 @@ def show_main_app():
 
 if __name__ == "__main__":
     # Crear ventana de login con callback
-    login_window = LoginView(on_login_sucess=show_main_app)
-    login_window.run()
+    #login_window = LoginView(on_login_sucess=show_main_app)
+    #login_window.run()
+    main_app = MainApp()
+    main_app.run()
+

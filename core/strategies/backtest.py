@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import argparse
 import time
+import os
 
 def inicializar_mt5():
     """Inicializa la conexión con MetaTrader 5"""
@@ -57,7 +58,7 @@ def listar_simbolos_disponibles():
     popular_symbols = [s.name for s in symbols if any(x in s.name for x in ["EURUSD", "GBPUSD", "USDJPY", "XAUUSD"])]
     
     print("Símbolos EUR/USD disponibles:")
-    for symbol in eur_symbols[:10]:  # Mostrar solo los primeros 10
+    for symbol in eur_symbols[:10]:
         print(f"  - {symbol}")
     
     print("\nSímbolos populares disponibles:")
@@ -72,8 +73,7 @@ def obtener_datos_alternativo(symbol, timeframe, start_date, end_date):
     
     # Calcular cuántas velas necesitamos (aproximadamente)
     days_diff = (end_date - start_date).days
-    # En M1, hay aproximadamente 1440 velas por día
-    total_velas_necesarias = days_diff * 1440
+    total_velas_necesarias = days_diff * 1440  # 1440 velas M1 por día
     
     # Usar copy_rates_from_pos en lugar de copy_rates_range
     rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, total_velas_necesarias)
@@ -119,8 +119,6 @@ def obtener_datos_por_partes(symbol, timeframe, start_date, end_date):
             print(f"  - No se pudieron obtener datos para este período")
         
         current_start = current_end + timedelta(days=1)
-        
-        # Pequeña pausa para no sobrecargar el servidor
         time.sleep(0.1)
     
     if not all_data:
@@ -208,14 +206,13 @@ def ejecutar_backtest():
     parser.add_argument('--capital', type=float, default=10000, help='Capital inicial')
     parser.add_argument('--risk', type=float, default=0.01, help='Riesgo por operación (0.01 = 1%)')
     parser.add_argument('--ratio', type=float, default=2, help='Ratio TP/SL')
-    parser.add_argument('--meses', type=int, default=3, help='Meses de backtesting')  # Reducido por defecto
+    parser.add_argument('--meses', type=int, default=3, help='Meses de backtesting')
     
     args = parser.parse_args()
     
     # Configuración
     SYMBOL = args.symbol
-    # CAPITAL_INICIAL = args.capital
-    CAPITAL_INICIAL = 10
+    CAPITAL_INICIAL = args.capital
     RISK = args.risk
     RATIO = args.ratio
     MESES_BACKTEST = args.meses
@@ -225,7 +222,7 @@ def ejecutar_backtest():
     start_date = end_date - timedelta(days=MESES_BACKTEST * 30)
     
     print("=" * 60)
-    print("BACKTESTING ESTRATEGIA ICT")
+    print("BACKTESTING ESTRATEGIA ICT - CAPITAL DINÁMICO")
     print("=" * 60)
     print(f"Símbolo: {SYMBOL}")
     print(f"Período: {start_date.strftime('%Y-%m-%d')} a {end_date.strftime('%Y-%m-%d')}")
@@ -289,10 +286,10 @@ def ejecutar_backtest():
             print(f"✗ Faltan columnas en los datos: {missing_columns}")
             return
         
-        # Asegurarse de que tenemos datos de spread (si no, crear unos ficticios)
+        # Asegurarse de que tenemos datos de spread
         if 'spread' not in data.columns or data['spread'].isnull().all():
             print("Nota: No se encontraron datos de spread, usando valores por defecto")
-            data['spread'] = 10  # Spread típico para EURUSD
+            data['spread'] = 10
         
         # Parámetros de la estrategia
         PARAMS = {
@@ -308,7 +305,7 @@ def ejecutar_backtest():
         }
         
         # Crear y ejecutar estrategia
-        print("Ejecutando backtesting...")
+        print("Ejecutando backtesting con capital dinámico...")
         estrategia = StrategyICT(data, **PARAMS)
         operaciones = estrategia.run()
         
@@ -349,6 +346,16 @@ def ejecutar_backtest():
             ratio_ganancia_perdida = avg_ganancia/abs(avg_perdida) if avg_perdida != 0 else 0
             print(f"Ratio ganancia/pérdida: {ratio_ganancia_perdida:>8.2f}")
             print(f"Profit Factor:      {profit_factor:>12.2f}")
+            
+            # Mostrar evolución del capital
+            print(f"\n📈 EVOLUCIÓN DEL CAPITAL:")
+            print(f"   - Capital más bajo: ${min(estrategia.capital_evolution):,.2f}")
+            print(f"   - Capital más alto: ${max(estrategia.capital_evolution):,.2f}")
+            print(f"   - Drawdown máximo: {((min(estrategia.capital_evolution) - CAPITAL_INICIAL) / CAPITAL_INICIAL * 100):.1f}%")
+            
+            # Generar gráfica de evolución
+            nombre_archivo = f"evolucion_{symbol_a_usar}_{datetime.now().strftime('%Y%m%d_%H%M')}.png"
+            estrategia.generar_grafica_evolucion(nombre_archivo)
             
             # Mostrar últimas operaciones
             if len(operaciones) > 0:

@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime, timedelta
 import random
 
-def generar_datos_evolucion(num_trades=400, capital_inicial=10000, win_rate=0.6, risk_reward=2):
+def generar_datos_evolucion(num_trades=400, capital_inicial=100, win_rate=0.6, risk_reward=2):
     """
     Genera datos simulados de evolución de cuenta
     """
@@ -192,7 +192,7 @@ def main():
     
     if modo == "1":
         # Generar datos de ejemplo
-        trades, capitales = generar_datos_evolucion(num_trades=400, capital_inicial=100000)
+        trades, capitales = generar_datos_evolucion(num_trades=400, capital_inicial=100)
         generar_grafica_evolucion(trades, capitales, "evolucion_ejemplo.png")
         
     elif modo == "2":
@@ -203,7 +203,7 @@ def main():
         # generar_grafica_desde_operaciones(operaciones, capital_inicial=10000)
         
     elif modo == "3":
-        # Desde archivo CSV
+        # Desde archivo CSV<<<
         archivo = input("Nombre del archivo CSV (default: resultados_backtest.csv): ").strip()
         if not archivo:
             archivo = "resultados_backtest.csv"

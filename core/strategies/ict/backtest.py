@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import argparse
 import time
 import warnings
-from ict_money import StrategyICT
+from ict_lord import StrategyICTContinuous
 
 warnings.filterwarnings('ignore')
 
@@ -148,7 +148,7 @@ class AdvancedICTBacktest:
         """Ejecuta la estrategia ICT con una configuración específica CORREGIDA"""
         try:
             # CORREGIDO: Parámetros mapeados correctamente
-            estrategia = StrategyICT(
+            estrategia = StrategyICTContinuous(
                 data=data,
                 symbol=self.symbol,
                 decimal=self.decimal,
@@ -413,7 +413,7 @@ def main():
     parser.add_argument('--symbol', type=str, default='EURUSDm', help='Símbolo a operar')
     parser.add_argument('--capital', type=float, default=100, help='Capital inicial')
     parser.add_argument('--risk', type=float, default=0.01, help='Riesgo por operación')
-    parser.add_argument('--meses', type=int, default=6, help='Meses de backtesting')
+    parser.add_argument('--meses', type=int, default=2, help='Meses de backtesting')
     
     args = parser.parse_args()
     

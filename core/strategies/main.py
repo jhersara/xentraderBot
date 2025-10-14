@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import math
 
 class TradingBot:
-    def __init__(self, symbol, risk=0.01, ratio=2, initial_cash=10000):
+    def __init__(self, symbol, risk=0.01, ratio=2, initial_cash=100):
         self.symbol = symbol
         self.risk = risk
         self.ratio = ratio

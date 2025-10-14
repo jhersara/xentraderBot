@@ -1,5 +1,5 @@
-from ict_money import StrategyICT
-from advanced_backtest import AdvancedICTBacktest
+from ict_lord import StrategyICTContinuous
+from backtest import AdvancedICTBacktest
 import MetaTrader5 as mt5
 import pandas as pd
 from datetime import datetime, timedelta
@@ -206,8 +206,8 @@ def ejecutar_backtest():
     parser.add_argument('--symbol', type=str, default='EURUSDm', help='Símbolo a operar')
     parser.add_argument('--capital', type=float, default=100, help='Capital inicial')
     parser.add_argument('--risk', type=float, default=0.01, help='Riesgo por operación (0.01 = 1%)')
-    parser.add_argument('--ratio', type=float, default=4, help='Ratio TP/SL')
-    parser.add_argument('--meses', type=int, default=12, help='Meses de backtesting')
+    parser.add_argument('--ratio', type=float, default=5, help='Ratio TP/SL')
+    parser.add_argument('--meses', type=int, default=54, help='Meses de backtesting')
     
     args = parser.parse_args()
     
@@ -298,8 +298,8 @@ def ejecutar_backtest():
             'decimal': 0.0001,
             'swap': 0,
             'tamcontrato': 100000,
-            'velas_15M': 25,
-            'velas_1M': 11,
+            'velas_15M': 16,
+            'velas_1M': 9,
             'ratio': RATIO,
             'risk': RISK,
             'initial_cash': CAPITAL_INICIAL
@@ -307,7 +307,7 @@ def ejecutar_backtest():
         
         # Crear y ejecutar estrategia
         print("Ejecutando backtesting con capital dinámico...")
-        estrategia = StrategyICT(data, **PARAMS)
+        estrategia = StrategyICTContinuous(data, **PARAMS)
         operaciones = estrategia.run()
         
         # Mostrar resultados detallados
@@ -391,3 +391,4 @@ def ejecutar_backtest():
 
 if __name__ == "__main__":
     ejecutar_backtest()
+

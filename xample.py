@@ -703,3 +703,44 @@ class MainApp(ctk.CTk):
 
     def run(self):
         self.mainloop()
+
+
+
+# Codigo para descargar datos del backtesting
+import MetaTrader5 as mt5
+import pandas as pd
+from datetime import datetime, timedelta
+
+# === CONFIGURACIÓN ===
+symbol = "EURUSD"               # Par a descargar
+timeframe = mt5.TIMEFRAME_M1    # 1 minuto
+start_date = datetime.now() - timedelta(days=365)  # Último año
+end_date = datetime.now()
+output_file = "eurusd_m1.csv"   # Nombre del archivo CSV final
+
+# === INICIAR CONEXIÓN ===
+print("🔌 Conectando a MetaTrader 5...")
+if not mt5.initialize():
+    print("❌ No se pudo conectar con MetaTrader 5")
+    quit()
+
+# === DESCARGAR DATOS ===
+print(f"📊 Descargando datos de {symbol} desde {start_date.date()} hasta {end_date.date()} ...")
+rates = mt5.copy_rates_range(symbol, timeframe, start_date, end_date)
+
+# === CERRAR CONEXIÓN ===
+mt5.shutdown()
+
+# === VALIDAR DATOS ===
+if rates is None or len(rates) == 0:
+    print("⚠️ No se recibieron datos. Asegúrate de que MT5 esté abierto y conectado.")
+    quit()
+
+# === CONVERTIR A DATAFRAME ===
+data = pd.DataFrame(rates)
+data['time'] = pd.to_datetime(data['time'], unit='s')
+data.set_index('time', inplace=True)
+
+# === GUARDAR ARCHIVO ===
+data.to_csv(output_file)
+print(f"✅ {len(data)} velas M1 guardadas en '{output_file}' correctamente.")

@@ -2,3 +2,10 @@ customtkinter>=5.2.0
 pillow>=10.0.0
 pystray>=0.19.0
 supabase>=2.0.0
+pandas
+MetaTrader5
+finta
+pandas_ta
+yfinance
+TA-Lib
+matplotlib

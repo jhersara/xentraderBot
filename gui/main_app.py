@@ -30,8 +30,8 @@ class MainApp(ctk.CTk):
         self.overrideredirect(True)
 
         # Tamaño inicial optimizado
-        self.geometry("1150x750")
-        self.normal_geometry = "1150x750"
+        self.geometry("1050x750")
+        self.normal_geometry = "1050x750"
         self.is_maximized = False
         self.tray_icon = None
         self.tray_thread = None

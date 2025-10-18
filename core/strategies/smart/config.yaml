@@ -1,0 +1,31 @@
+# config.yaml - Configuration template
+mode: "paper"
+mt5:
+  path: "C:/Program Files/MetaTrader 5/terminal64.exe"
+  login: 123456
+  password: "${MT5_PASSWORD}"
+  server: "Exness-Server"
+
+pairs:
+  - "EURUSDm"
+  - "GBPUSDm"
+
+timeframes:
+  structure: "M15"
+  execution: ["M5", "M1"]
+
+risk:
+  risk_percent_per_trade: 1.0
+  max_daily_trades: 5
+  max_consecutive_losses: 3
+  max_daily_drawdown_percent: 5.0
+
+order:
+  default_stop_pips: 5
+  rr_target: 2.0
+  max_slippage_pips: 2
+
+telegram:
+  enabled: true
+  bot_token_env: "TG_BOT_TOKEN"
+  chat_id_env: "TG_CHAT_ID"

@@ -458,16 +458,16 @@ proporcione el Software hacer lo mismo, sujeto a las siguientes condiciones...
 
 ### Equipo
 
-- **Lead Developer**: [Tu Nombre](https://github.com/tu-usuario)
-- **UI/UX Designer**: [Diseñador](https://github.com/diseñador)
-- **Trading Expert**: [Experto](https://github.com/experto)
+- **Lead Developer**: [Tu Nombre](https://github.com/jhersara)
+- **UI/UX Designer**: [Diseñador](https://github.com/jhersara)
+- **Trading Expert**: [Experto](https://github.com/jhersara)
 
 ### Links Útiles
 
 - 🌐 [Website](https://xentraders.com)
 - 📚 [Documentación](https://docs.xentraders.com)
-- 🐛 [Reportar Bug](https://github.com/tu-usuario/xentraderBot/issues)
-- 💡 [Solicitar Feature](https://github.com/tu-usuario/xentraderBot/issues/new)
+- 🐛 [Reportar Bug](https://github.com/jhersara/xentraderBot/issues)
+- 💡 [Solicitar Feature](https://github.com/jhersara/xentraderBot/issues/new)
 
 ---
 
@@ -514,13 +514,13 @@ Queremos agradecer a:
 
 ## 📊 Estadísticas del Proyecto
 
-![GitHub stars](https://img.shields.io/github/stars/tu-usuario/xentraderBot?style=social)
-![GitHub forks](https://img.shields.io/github/forks/tu-usuario/xentraderBot?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/tu-usuario/xentraderBot?style=social)
+![GitHub stars](https://img.shields.io/github/stars/jhersar/xentraderBot?style=social)
+![GitHub forks](https://img.shields.io/github/forks/jhersara/xentraderBot?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/jhersara/xentraderBot?style=social)
 
-![GitHub issues](https://img.shields.io/github/issues/tu-usuario/xentraderBot)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/tu-usuario/xentraderBot)
-![GitHub last commit](https://img.shields.io/github/last-commit/tu-usuario/xentraderBot)
+![GitHub issues](https://img.shields.io/github/issues/jhersara/xentraderBot)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/jhersara/xentraderBot)
+![GitHub last commit](https://img.shields.io/github/last-commit/jhersara/xentraderBot)
 
 ---
 
